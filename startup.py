@@ -6,6 +6,7 @@ The purpose is to start an interactive Python session with all required imports 
 Make sure the PYTHONSTARTUP environment variable is defined in your terminal environment or the
 variable is defined and loaded in the Console preferences in PyCharm.
 """
+
 import sys
 import logging
 
@@ -21,6 +22,7 @@ print("Loading default and required modules..")
 import numpy as np
 
 from egse.setup import load_setup, submit_setup, list_setups
+
 # from egse.observation import start_observation, end_observation, execute
 from tvac import heaters, power_supply
 

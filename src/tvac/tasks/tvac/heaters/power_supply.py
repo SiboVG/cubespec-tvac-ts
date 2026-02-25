@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from egse.observation import start_observation, end_observation
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 
@@ -25,7 +26,7 @@ def switch_on_heater(
     """
 
     if heater.startswith("H"):
-        # start_observation(f"Configure + switch on heater {heater}")
+        start_observation(f"Configure + switch on heater {heater}")
 
         try:
             config_psu(heater_name=heater, dissipation=dissipation)
@@ -33,7 +34,7 @@ def switch_on_heater(
             print(f"Failed to configure + switch on heater {heater}: {e}")
 
     else:
-        # start_observation(f"Configure + switch on all heaters")
+        start_observation(f"Configure + switch on all heaters")
 
         for heater_name in heaters():
             try:
@@ -41,7 +42,7 @@ def switch_on_heater(
             except Exception as e:
                 print(f"Failed to configure + switch on heater {heater_name}: {e}")
 
-    # end_observation()
+    end_observation()
 
 
 @exec_ui(display_name="Switch-off", use_kernel=True)
@@ -53,7 +54,7 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
     """
 
     if heater.startswith("H"):
-        # start_observation(f"Switch off heater {heater}")
+        start_observation(f"Switch off heater {heater}")
 
         try:
             switch_off_psu(heater_name=heater)
@@ -61,7 +62,7 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
             print(f"Failed to switch off heater {heater}: {e}")
 
     else:
-        # start_observation(f"Switch off all heaters")
+        start_observation(f"Switch off all heaters")
 
         for heater_name in heaters():
             try:
@@ -69,7 +70,7 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
             except Exception as e:
                 print(f"Failed to switch off heater {heater_name}: {e}")
 
-    # end_observation()
+    end_observation()
 
 
 @exec_ui(display_name="Clear alarms", use_kernel=True)

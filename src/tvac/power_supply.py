@@ -1,11 +1,13 @@
 import math
 
 from egse.command import InvalidArgumentsError
+from egse.observation import building_block
 from egse.power_supply.kikusui.pmx import IntSwitch
 from egse.power_supply.kikusui.pmx_a.pmx_a import PmxAInterface
 from egse.setup import Setup, load_setup
 
 
+@building_block
 def config_psu(heater_name: str, dissipation: str, setup: Setup = None):
     """Configures the Power Supply Unit for the given heater and switches the output on.
 
@@ -72,6 +74,7 @@ def config_psu(heater_name: str, dissipation: str, setup: Setup = None):
     psu_device.set_output_status(IntSwitch.ON)
 
 
+@building_block
 def switch_off_psu(heater_name: str, setup: Setup = None) -> None:
     """Switches off the output the Power Supply Unit for the given heater.
 
@@ -98,6 +101,7 @@ def switch_off_psu(heater_name: str, setup: Setup = None) -> None:
     psu_device.set_output_status(IntSwitch.OFF)
 
 
+@building_block
 def clear_psu_alarms(heater_name: str, setup: Setup = None) -> None:
     """Clears the alarms for the Power Supply Unit for the given heater.
 
@@ -124,6 +128,7 @@ def clear_psu_alarms(heater_name: str, setup: Setup = None) -> None:
     psu_device.clear_alarms()
 
 
+@building_block
 def reset_psu(heater_name: str, setup: Setup = None) -> None:
     """Resets the Power Supply Unit for the given heater.
 

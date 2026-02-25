@@ -25,7 +25,7 @@ def heaters() -> List[str]:
 def heaters_incl_all() -> List[str]:
     """Names of the heaters.  Each of them has a dedicated Power Supply Unit."""
 
-    return HEATERS + ["All heaters"]
+    return ["All heaters"] + HEATERS
 
 
 def dissipation_modes() -> List[str]:

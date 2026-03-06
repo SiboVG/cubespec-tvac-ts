@@ -29,6 +29,9 @@ dependencies = [
     "pytz",
 ]
 
+[project.entry-points."navdict.directive"]
+mat = "tvac.directives:load_mat"
+
 [project.gui-scripts]
 tvac_ui = 'tvac.tasks.tvac.__init__:tvac_ui'
 

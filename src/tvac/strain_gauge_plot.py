@@ -8,12 +8,22 @@ consumes shared buffers from ``tvac.strain_gauge``.
 import bisect
 
 import matplotlib
-matplotlib.use("TkAgg")
+# GUI Executor is Qt-based; prefer a Qt backend to avoid Tk/Qt event-loop conflicts.
+if "qt" not in matplotlib.get_backend().lower():
+    try:
+        matplotlib.use("QtAgg")
+    except Exception:
+        pass
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from egse.setup import load_setup
-from tvac.strain_gauge import plot_lock, time_buffer, ch_buffers
+from egse.setup import load_setup_from_disk
+from tvac.strain_gauge import (
+    ch_buffers,
+    get_sg_effective_settings,
+    plot_lock,
+    time_buffer,
+)
 
 # Default colours, extended automatically if more channels are needed.
 _COLORS = [
@@ -28,14 +38,25 @@ def open_live_plot(setup=None):
     Parameters are read from ``setup.gse.labjack_t7.plot`` and
     ``setup.gse.labjack_t7.channels``.
     """
-    setup = setup or load_setup()
-    cfg = setup.gse.labjack_t7
+    setup = setup or load_setup_from_disk(None)
+    effective = get_sg_effective_settings(setup=setup)
 
-    window_seconds = cfg.plot.window_seconds
-    interval_ms = cfg.plot.interval_ms
-    show_stats = cfg.plot.show_stats
+    window_seconds = float(effective["plot"]["window_seconds"])
+    interval_ms = int(effective["plot"]["interval_ms"])
+    show_stats = bool(effective["plot"]["show_stats"])
 
-    channel_names = [f"AIN{cfg.channels[k].ain_channel}" for k in cfg.channels]
+    selected_channels = [
+        (sg_name, ch_cfg)
+        for sg_name, ch_cfg in effective["channels"].items()
+        if ch_cfg["enabled"]
+    ]
+    if not selected_channels:
+        raise ValueError("No SG channels are enabled for plotting.")
+
+    channel_names = [
+        f"{sg_name} (AIN{int(ch_cfg['ain_channel'])})"
+        for sg_name, ch_cfg in selected_channels
+    ]
     num_channels = len(channel_names)
 
     colors = (_COLORS * ((num_channels // len(_COLORS)) + 1))[:num_channels]

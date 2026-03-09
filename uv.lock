@@ -303,7 +303,7 @@ wheels = [
 
 [[package]]
 name = "cgse-common"
-version = "0.17.4"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -328,14 +328,14 @@ dependencies = [
     { name = "rich" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4e/e5/31fe187dfe8a87f93fecc3a5aee8c5d7ddd334e2b25a36cd9242f181b9e2/cgse_common-0.17.4.tar.gz", hash = "sha256:0241aa998034c6a329cd90a6e53c26d1476e2bcffb62ef5bce82687faf5549ac", size = 112807, upload-time = "2026-01-27T14:56:10.902Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1a/a1/6e02fa051360ab074d7e1831f61d469c52e25600dc2a45a25dff2fade926/cgse_common-0.19.0.tar.gz", hash = "sha256:30ccce9ce90247fef38ca9e804bf595ef66d14d7a7d25d0172ad218ebf0487d5", size = 115668, upload-time = "2026-03-06T12:16:55.381Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6d/89/98f739555337e3db79b63f12553717f752089819714f9e4170d7468b2986/cgse_common-0.17.4-py3-none-any.whl", hash = "sha256:38a9529bddd76138032f515e372d9d1df19425395eb72aef6e911fc6da7d0053", size = 127565, upload-time = "2026-01-27T14:56:09.466Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/c5/d40802b3e490b041478224abbbfc9e51c267743292a4655ec47796d0125d/cgse_common-0.19.0-py3-none-any.whl", hash = "sha256:84594788367dab317fff49b35fb49ad68736736cc8b87bfb6ad6881ea5d486fe", size = 129444, upload-time = "2026-03-06T12:16:31.825Z" },
 ]
 
 [[package]]
 name = "cgse-core"
-version = "0.17.4"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -345,9 +345,9 @@ dependencies = [
     { name = "cgse-tools" },
     { name = "qtpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d6/2c/7dfac527a2fb34fafafe49dfba97c1c14fec4c2be10b3338e69424714bf1/cgse_core-0.17.4.tar.gz", hash = "sha256:11083f4b9758a47c0ec9a3ce3b65d9d94d16682e9ce7502960a1d5b5fe63a92c", size = 129812, upload-time = "2026-01-27T14:56:14.893Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/ba/26fb2d9066a29b08d990d606ff03f67fc899d41f9d49798660acbddae4f5/cgse_core-0.19.0.tar.gz", hash = "sha256:4841f81d62ee2077761037c11e19602e33e7c9dd8b42dc5b37c5cd6b4a17b7bc", size = 132730, upload-time = "2026-03-06T12:16:29.711Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/33/04ba8ea1de97490414345cc4b4044305ff34117e1225171b9b61357dc57c/cgse_core-0.17.4-py3-none-any.whl", hash = "sha256:dccc4606b76775119c34ae2735abd02a69771c402d848a22abda36a0aa798002", size = 155065, upload-time = "2026-01-27T14:56:13.625Z" },
+    { url = "https://files.pythonhosted.org/packages/01/e8/b0fbfc0b8686ce95e90325bae369c2cb1f3e399fa5a154feb264ab8da1d4/cgse_core-0.19.0-py3-none-any.whl", hash = "sha256:287097b62b33210acbea9b4e83e6c10b67eba54b77f23a83f193c74772e81a50", size = 158504, upload-time = "2026-03-06T12:16:57.827Z" },
 ]
 
 [[package]]
@@ -362,15 +362,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/5b/09/0d7362c160da26ced
 
 [[package]]
 name = "cgse-tools"
-version = "0.17.4"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "textual" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/af/4d/33752b8c94829acf6d222e613238fa8f487069dd6752678bfd0bd4a7e726/cgse_tools-0.17.4.tar.gz", hash = "sha256:acff92e5b8817350ae9198b1c96cb05ae67c09207bb49b93ee018a43366343e7", size = 6381, upload-time = "2026-01-27T14:56:19.421Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/32/5bb3134c67249c3117c6881bba679b5a3d667820e1200675d354ab0f8e3c/cgse_tools-0.19.0.tar.gz", hash = "sha256:7375ccd8e749a3368d068866abb520f70c0e61a05cf9bca3f336c022e4b6b4dc", size = 6404, upload-time = "2026-03-06T12:16:30.898Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4b/a8/5ce03351564b830ec555c025fe6247e35b591f23f26cb85c5ab25b300ec7/cgse_tools-0.17.4-py3-none-any.whl", hash = "sha256:2c28ebe0f6b22e4b6e136944944ec2b393ae5d40353f2c0909323b95ff0a2a40", size = 7661, upload-time = "2026-01-27T14:56:18.595Z" },
+    { url = "https://files.pythonhosted.org/packages/4c/4c/9683e4ad49cd65fa90a67bd7e3339c5a90eac523f5569e5346d64b6b82bb/cgse_tools-0.19.0-py3-none-any.whl", hash = "sha256:e42718a68a4de98dce5214ec16fe43490d5899a895ea7a5330d21949060d0d07", size = 7661, upload-time = "2026-03-06T12:16:44.743Z" },
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 from typing import List
 
-UI_TAB_DISPLAY_MODE = "Heaters"
+UI_TAB_DISPLAY_NAME = "Heaters"
 
 HEATERS = [
     "HFGS",

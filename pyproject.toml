@@ -25,6 +25,8 @@ dependencies = [
     "keithley-tempcontrol",
     "kikusui-power-supply",
     "gui-executor",
+    "labjack-ljm",
+    "matplotlib",
     "pyqt5",
     "pytz",
 ]

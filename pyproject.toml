@@ -24,9 +24,11 @@ dependencies = [
     "digilent",
     "keithley-tempcontrol",
     "kikusui-power-supply",
+    "aim-tti-awg",
     "gui-executor",
     "pyqt5",
     "pytz",
+    "scipy>=1.15.3",
 ]
 
 [project.entry-points."navdict.directive"]

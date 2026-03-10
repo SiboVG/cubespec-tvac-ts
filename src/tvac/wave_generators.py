@@ -233,6 +233,27 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
     return v1_config, v2_config, v3_config, frequency
 
 
+@building_block
+def switch_off_awg(setup: Setup = None):
+    """Switches off the wave generators.
+
+    Args:
+        setup (Setup): Setup from which to extract the information from the wave generators.
+    """
+
+    setup = setup or load_setup()
+
+    awg1: Tgf4000Interface = setup.gse.wave_generators.awg1.device
+    awg1.set_channel(1)
+    awg1.set_output(Output.OFF)
+    awg1.set_channel(2)
+    awg1.set_output(Output.OFF)
+
+    awg2: Tgf4000Interface = setup.gse.wave_generators.awg2.device
+    awg2.set_channel(1)
+    awg2.set_output(Output.OFF)
+
+
 # def get_arb_waves(piezo_setup: dict, factor: float):
 #                 # (filename: str = '/Users/sara/Downloads/SIGN_1_LG.mat', profile: str = None):
 #     """Returns the frequency and time series for all piezo actuators.

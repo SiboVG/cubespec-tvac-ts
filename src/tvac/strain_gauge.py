@@ -5,11 +5,11 @@ Reads LabJack T7 and CSV configuration from the CGSE Setup, mirrors
 the pattern of ``tvac.power_supply`` for heaters.
 """
 
-import csv
-import os
-import datetime
-import threading
 import bisect
+import csv
+import datetime
+import os
+import threading
 
 from egse.setup import Setup, load_setup_from_disk
 
@@ -18,6 +18,7 @@ from egse.setup import Setup, load_setup_from_disk
 # Module-level state for the active logging session
 # ---------------------------------------------------------------------------
 _logger = None  # LabJackT7Logger, imported lazily to avoid LJM init on import
+_session_lock = threading.RLock()
 _csv_lock = threading.Lock()
 _csv_file = None
 _csv_writer = None
@@ -74,6 +75,15 @@ _cached_channel_settings: dict[str, dict[str, object]] = {
 plot_lock = threading.Lock()
 time_buffer: list[float] = []
 ch_buffers: list[list[float]] = []
+
+
+def _sg_debug(message: str) -> None:
+    if not os.environ.get("TVAC_SG_DEBUG", "").strip():
+        return
+
+    stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    thread_name = threading.current_thread().name
+    print(f"[strain_gauge {stamp} {thread_name}] {message}")
 
 
 def _coerce_bool(value, field_name: str) -> bool:
@@ -397,7 +407,16 @@ def _rotate_csv(headers):
 def _on_stream_data(*, timestamps, readings, channel_names, device_backlog, ljm_backlog):
     global _read_count, _csv_writer, _csv_file, _csv_filename
 
-    if _csv_enabled:
+    if not timestamps or not readings:
+        return
+
+    with _session_lock:
+        csv_enabled = _csv_enabled
+        plot_enabled = _plot_enabled
+        plot_keep_seconds = _plot_keep_seconds
+        logger = _logger
+
+    if csv_enabled:
         with _csv_lock:
             if _csv_writer is None:
                 _rotate_csv(channel_names)
@@ -419,8 +438,11 @@ def _on_stream_data(*, timestamps, readings, channel_names, device_backlog, ljm_
             if os.path.getsize(_csv_filename) >= _max_file_size:
                 _rotate_csv(channel_names)
 
-    if _plot_enabled:
-        t0 = _logger.stream_start_time
+    if plot_enabled:
+        if logger is None or logger.stream_start_time is None:
+            return
+
+        t0 = logger.stream_start_time
         new_times = [(ts - t0).total_seconds() for ts in timestamps]
         new_vals = list(zip(*readings))
 
@@ -431,7 +453,7 @@ def _on_stream_data(*, timestamps, readings, channel_names, device_backlog, ljm_
 
             # Bound in-memory buffers even if no live-plot consumer is running.
             # This prevents runaway growth that can eventually stall the UI.
-            cutoff = time_buffer[-1] - _plot_keep_seconds
+            cutoff = time_buffer[-1] - plot_keep_seconds
             trim_idx = bisect.bisect_left(time_buffer, cutoff)
             if trim_idx > 0:
                 del time_buffer[:trim_idx]
@@ -450,10 +472,6 @@ def start_sg_logging(setup: Setup = None):
     global _file_index, _read_count, _csv_file, _csv_writer, _csv_filename
     global _active_channel_labels
 
-    if _logger is not None:
-        print("Strain-gauge logging is already running.")
-        return
-
     setup = setup or load_setup_from_disk(None)
     effective = _get_effective_settings(setup=setup)
     effective_channels = _get_effective_channel_settings(setup=setup)
@@ -465,88 +483,135 @@ def start_sg_logging(setup: Setup = None):
     if not selected_channels:
         raise ValueError("No SG channels are enabled. Enable at least one channel first.")
 
-    # CSV config
-    _csv_enabled = bool(effective["csv"]["enabled"])
-    _save_path = str(effective["csv"]["save_path"])
-    _base_filename = str(effective["csv"]["base_filename"])
-    _max_file_size = int(effective["csv"]["max_file_size_bytes"])
-
-    if _csv_enabled:
-        os.makedirs(_save_path, exist_ok=True)
-
-    _start_ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    _file_index = 0
-    _read_count = 0
-    _csv_file = None
-    _csv_writer = None
-    _csv_filename = ""
-
-    # Plot config
-    _plot_enabled = bool(effective["plot"]["enabled"])
-    _plot_keep_seconds = max(1.0, float(effective["plot"]["window_seconds"]) * 1.2)
-
-    # Reset plot buffers
     n_ch = len(selected_channels)
-    with plot_lock:
-        time_buffer.clear()
-        ch_buffers.clear()
-        ch_buffers.extend([] for _ in range(n_ch))
 
     ain_channels = []
     voltage_ranges = []
     neg_voltage_ranges = []
     resolution_indices = []
-    _active_channel_labels = []
+    active_channel_labels = []
     for sg_name, ch_cfg in selected_channels:
         ain_channels.append(int(ch_cfg["ain_channel"]))
         voltage_ranges.append(float(ch_cfg["voltage_range"]))
         neg_voltage_ranges.append(float(ch_cfg["neg_voltage_range"]))
         resolution_indices.append(int(ch_cfg["resolution_index"]))
-        _active_channel_labels.append(f"{sg_name}(AIN{int(ch_cfg['ain_channel'])})")
+        active_channel_labels.append(f"{sg_name}(AIN{int(ch_cfg['ain_channel'])})")
 
     if len(set(ain_channels)) != len(ain_channels):
         raise ValueError("Enabled SG channels must use unique AIN channels.")
 
     from tvac.labjack_t7 import LabJackT7Logger
-    _logger = LabJackT7Logger(
-        ain_channels=ain_channels,
-        scan_rate=float(effective["stream"]["scan_rate"]),
-        voltage_range=voltage_ranges,
-        neg_voltage_range=neg_voltage_ranges,
-        resolution_index=resolution_indices,
-        resync_interval_s=int(effective["stream"]["resync_interval_s"]),
-        buffer_size=int(effective["stream"]["buffer_size"]),
+
+    with _session_lock:
+        if _logger is not None:
+            print("Strain-gauge logging is already running.")
+            return
+
+        _csv_enabled = bool(effective["csv"]["enabled"])
+        _save_path = str(effective["csv"]["save_path"])
+        _base_filename = str(effective["csv"]["base_filename"])
+        _max_file_size = int(effective["csv"]["max_file_size_bytes"])
+
+        if _csv_enabled:
+            os.makedirs(_save_path, exist_ok=True)
+
+        _start_ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        _file_index = 0
+        _read_count = 0
+        _csv_file = None
+        _csv_writer = None
+        _csv_filename = ""
+
+        _plot_enabled = bool(effective["plot"]["enabled"])
+        _plot_keep_seconds = max(
+            1.0, float(effective["plot"]["window_seconds"]) * 1.2
+        )
+        _active_channel_labels = active_channel_labels
+
+        _logger = LabJackT7Logger(
+            ain_channels=ain_channels,
+            scan_rate=float(effective["stream"]["scan_rate"]),
+            voltage_range=voltage_ranges,
+            neg_voltage_range=neg_voltage_ranges,
+            resolution_index=resolution_indices,
+            resync_interval_s=int(effective["stream"]["resync_interval_s"]),
+            buffer_size=int(effective["stream"]["buffer_size"]),
+        )
+        logger = _logger
+
+    with plot_lock:
+        time_buffer.clear()
+        ch_buffers.clear()
+        ch_buffers.extend([] for _ in range(n_ch))
+
+    _sg_debug(
+        "starting stream "
+        f"channels={_active_channel_labels} "
+        f"scan_rate={effective['stream']['scan_rate']} "
+        f"plot_enabled={effective['plot']['enabled']} "
+        f"csv_enabled={effective['csv']['enabled']}"
     )
-    _logger.start_stream(callback=_on_stream_data)
+
+    try:
+        logger.start_stream(callback=_on_stream_data)
+    except Exception:
+        try:
+            logger.close()
+        except Exception:
+            pass
+        with _session_lock:
+            if _logger is logger:
+                _logger = None
+        raise
 
 
 def stop_sg_logging():
     """Stop the active strain-gauge logging session."""
-    global _logger, _csv_file, _active_channel_labels
+    global _logger, _csv_file, _csv_filename, _csv_writer, _active_channel_labels
 
-    if _logger is None:
-        print("No strain-gauge logging session is active.")
-        return
+    with _session_lock:
+        logger = _logger
+        if logger is None:
+            print("No strain-gauge logging session is active.")
+            return
 
-    _logger.close()
-    _logger = None
+    _sg_debug("stop requested")
 
-    if _csv_file:
-        _csv_file.close()
-    _active_channel_labels = []
+    try:
+        logger.close()
+    finally:
+        with _session_lock:
+            if _logger is logger:
+                _logger = None
+            _active_channel_labels = []
+
+        with _csv_lock:
+            if _csv_file:
+                _csv_file.close()
+            _csv_file = None
+            _csv_writer = None
+            _csv_filename = ""
+
+        with plot_lock:
+            time_buffer.clear()
+            ch_buffers.clear()
 
     print("Strain-gauge logging stopped.")
 
 
 def get_sg_status() -> str:
     """Return a short status string for the current logging session."""
-    if _logger is None:
+    with _session_lock:
+        logger = _logger
+        channels = (
+            ", ".join(_active_channel_labels) if _active_channel_labels else "n/a"
+        )
+    if logger is None:
         return "Not running"
-    rate = _logger.actual_scan_rate
-    channels = ", ".join(_active_channel_labels) if _active_channel_labels else "n/a"
+    rate = logger.actual_scan_rate
     return (
         f"Running at {rate:.1f} Hz, "
-        f"{_logger.num_addresses} channels, "
+        f"{logger.num_addresses} channels, "
         f"[{channels}], "
         f"{_read_count} reads, "
         f"file: {_csv_filename}"

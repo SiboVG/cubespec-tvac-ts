@@ -17,7 +17,7 @@ if "qt" not in matplotlib.get_backend().lower():
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from egse.setup import load_setup_from_disk
+from egse.setup import load_setup
 from tvac.strain_gauge import (
     ch_buffers,
     get_sg_effective_settings,
@@ -38,7 +38,7 @@ def open_live_plot(setup=None):
     Parameters are read from ``setup.gse.labjack_t7.plot`` and
     ``setup.gse.labjack_t7.channels``.
     """
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     effective = get_sg_effective_settings(setup=setup)
 
     window_seconds = float(effective["plot"]["window_seconds"])

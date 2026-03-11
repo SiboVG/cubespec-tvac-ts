@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from PyQt5.QtWidgets import QCheckBox, QComboBox, QHBoxLayout
-from egse.setup import load_setup_from_disk
+from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import TypeObject, UQWidget
 
@@ -222,7 +222,7 @@ def start_logging() -> None:
     (``setup.gse.labjack_t7``).
     """
     try:
-        setup = load_setup_from_disk(None)
+        setup = load_setup()
         start_sg_logging(setup=setup)
 
         if get_sg_effective_settings(setup=setup)["plot"]["enabled"]:

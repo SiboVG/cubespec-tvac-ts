@@ -11,7 +11,7 @@ import datetime
 import os
 import threading
 
-from egse.setup import Setup, load_setup_from_disk
+from egse.setup import Setup, load_setup
 
 
 # ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ def _snapshot_setup_channels(setup: Setup) -> dict[str, dict[str, object]]:
 
 
 def _get_effective_settings(setup: Setup = None) -> dict[str, dict[str, object]]:
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     effective = _snapshot_setup_cfg(setup)
     for section_name, overrides in _runtime_overrides.items():
         effective[section_name].update(overrides)
@@ -172,7 +172,7 @@ def _get_effective_settings(setup: Setup = None) -> dict[str, dict[str, object]]
 
 
 def _get_effective_channel_settings(setup: Setup = None) -> dict[str, dict[str, object]]:
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     effective = _snapshot_setup_channels(setup)
     for sg_name, overrides in _runtime_channel_overrides.items():
         if sg_name in effective:
@@ -182,7 +182,7 @@ def _get_effective_channel_settings(setup: Setup = None) -> dict[str, dict[str, 
 
 def get_sg_effective_settings(setup: Setup = None) -> dict[str, dict[str, object]]:
     """Return effective SG settings (Setup values + runtime overrides)."""
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     return {
         **_get_effective_settings(setup),
         "channels": _get_effective_channel_settings(setup),
@@ -191,7 +191,7 @@ def get_sg_effective_settings(setup: Setup = None) -> dict[str, dict[str, object
 
 def get_sg_channel_names(setup: Setup = None) -> list[str]:
     """Return the SG channel keys from the active setup."""
-    return list(_snapshot_setup_channels(setup or load_setup_from_disk(None)).keys())
+    return list(_snapshot_setup_channels(setup or load_setup()).keys())
 
 
 def get_cached_sg_channel_names() -> list[str]:
@@ -282,7 +282,7 @@ def set_sg_channel_runtime_settings(
     setup: Setup = None,
 ) -> None:
     """Set in-memory runtime overrides for one SG channel definition."""
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     channels = _snapshot_setup_channels(setup)
     valid_names = channels.keys()
     if sg_name not in valid_names:
@@ -317,14 +317,14 @@ def reset_sg_runtime_settings() -> None:
         section.clear()
     _runtime_channel_overrides.clear()
     try:
-        _snapshot_setup_channels(load_setup_from_disk(None))
+        _snapshot_setup_channels(load_setup())
     except Exception:
         pass
 
 
 def get_sg_settings(setup: Setup = None) -> str:
     """Return a human-readable snapshot of effective SG settings."""
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     effective = _get_effective_settings(setup=setup)
     channels = _get_effective_channel_settings(setup=setup)
 
@@ -472,7 +472,7 @@ def start_sg_logging(setup: Setup = None):
     global _file_index, _read_count, _csv_file, _csv_writer, _csv_filename
     global _active_channel_labels
 
-    setup = setup or load_setup_from_disk(None)
+    setup = setup or load_setup()
     effective = _get_effective_settings(setup=setup)
     effective_channels = _get_effective_channel_settings(setup=setup)
     selected_channels = [

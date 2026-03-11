@@ -1,6 +1,6 @@
 from typing import List
 
-UI_TAB_DISPLAY_MODE = "Piezo actuators"
+UI_TAB_DISPLAY_NAME = "Piezo actuators"
 
 PROFILES = ["LG", "LGA", "HG", "HGA"]
 

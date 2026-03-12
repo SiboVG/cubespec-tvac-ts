@@ -100,7 +100,7 @@ class SGChannelConfigWidget(UQWidget):
         _set_combo_value(self.voltage_combo, voltage_range)
         _set_combo_value(self.resolution_combo, resolution_index)
 
-    def get_value(self):
+    def _current_config(self) -> dict[str, object]:
         return {
             "sg_name": self.sg_combo.currentText(),
             "enabled": self.enabled_cb.isChecked(),
@@ -108,6 +108,24 @@ class SGChannelConfigWidget(UQWidget):
             "voltage_range": float(self.voltage_combo.currentText()),
             "resolution_index": int(self.resolution_combo.currentText()),
         }
+
+    def get_value(self):
+        config = self._current_config()
+
+        # The command itself runs in the kernel, but this widget lives in the GUI
+        # process. Mirror the submitted values into the local cache so reopening the
+        # form shows the latest channel state immediately.
+        set_sg_channel_runtime_settings(
+            sg_name=str(config["sg_name"]),
+            enabled=bool(config["enabled"]),
+            ain_channel=int(config["ain_channel"]),
+            voltage_range=float(config["voltage_range"]),
+            resolution_index=int(config["resolution_index"]),
+        )
+        self._channel_settings = get_cached_sg_channel_settings()
+        self._apply_channel_defaults(str(config["sg_name"]))
+
+        return config
 
 
 @exec_ui(display_name="Query Settings", use_kernel=True)

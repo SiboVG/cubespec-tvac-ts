@@ -6,7 +6,7 @@ from gui_executor.utypes import Callback
 from tvac.heaters import print_heater_settings
 from tvac.tasks.tvac.heaters import heaters
 
-UI_MODULE_DISPLAY_NAME = "2 - Heaters"
+UI_MODULE_DISPLAY_NAME = "2 - Settings"
 HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 

@@ -4,15 +4,16 @@ from egse.observation import start_observation, end_observation
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 
-from tvac.power_supply import config_psu, switch_off_psu, clear_psu_alarms
-from tvac.tasks.tvac.heaters import heaters, dissipation_modes, heaters_incl_all
+from tvac.power_supply import switch_off_psu, config_psu
+from tvac.tasks.tvac.heaters import heaters_incl_all, heaters, dissipation_modes
 
-UI_MODULE_DISPLAY_NAME = "1 - Power supplies"
+UI_MODULE_DISPLAY_NAME = "1 - Switch-on && Switch-off"
 HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
-@exec_ui(display_name="Configuration & switch-on", use_kernel=True)
+
+@exec_ui(display_name="Switch-on", use_kernel=True)
 def switch_on_heater(
     heater: Callback(heaters_incl_all, name="Heater") = None,
     dissipation: Callback(dissipation_modes, name="Heat dissipation") = None,
@@ -45,6 +46,7 @@ def switch_on_heater(
     end_observation()
 
 
+
 @exec_ui(display_name="Switch-off", use_kernel=True)
 def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) -> None:
     """Switches off the Power Supply Unit for the given heater.
@@ -71,31 +73,3 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
                 print(f"Failed to switch off heater {heater_name}: {e}")
 
     end_observation()
-
-
-@exec_ui(display_name="Clear alarms", use_kernel=True)
-def clear_alarms(heater: Callback(heaters, name="Heater") = None):
-    """Clears the alarms for the Power Supply Unit for the given heater.
-
-    Args:
-        heater: Name of the heater.
-    """
-
-    try:
-        clear_psu_alarms(heater_name=heater)
-    except Exception as e:
-        print(f"Failed to clear alarms for heater {heater}: {e}")
-
-
-@exec_ui(display_name="Reset", use_kernel=True)
-def reset(heater: Callback(heaters, name="Heater") = None):
-    """Resets the Power Supply Unit for the given heater.
-
-    Args:
-        heater: Name of the heater.
-    """
-
-    try:
-        clear_psu_alarms(heater_name=heater)
-    except Exception as e:
-        print(f"Failed to reset Power Supply Unit for heater {heater}: {e}")

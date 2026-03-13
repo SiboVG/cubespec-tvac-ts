@@ -16,7 +16,7 @@ def start_piezo_characterization(
     start_frequency: Callback(float, name="Sweep start frequency [Hz]") = 1000,
     stop_frequency: Callback(float, name="Sweep stop frequency [Hz]") = 10000,
     sweep_time: Callback(float, name="Sweep time [s]") = 60,
-    fixed_voltage: Callback(float, name="Constant voltage [Vdc]") = 0.0,
+    fixed_voltage: Callback(float, name="Constant voltage (other piezos) [Vdc]") = 0.0,
 ):
     """Charactersisation of the given piezo actuator.
 

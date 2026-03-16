@@ -6,7 +6,7 @@ from executor import ExternalCommand
 
 HERE = Path(__file__).parent.resolve()
 
-UI_TAB_ORDER = ["heaters"]
+UI_TAB_ORDER = ["heaters", "piezos"]
 
 
 def tvac_ui():
@@ -18,6 +18,8 @@ def tvac_ui():
 
     cmd = ExternalCommand(
         f"gui-executor --verbose --module-path tvac.tasks.tvac.heaters "
+        f"--module-path tvac.tasks.tvac.piezos "
+        f"--kernel-name cubespec-tvac-ts --single "
         f"--logo {logo_path} --cmd-log {cmd_log} --app-name 'TVAC GUI' "
         f"{' '.join(sys.argv[1:])}",
         asynchronous=True,

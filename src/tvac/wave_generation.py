@@ -302,6 +302,11 @@ def characterize_piezo(
                     awg.set_sweep_time(sweep_time)
 
                     awg.set_sweep(Sweep.ON)
+
+                    # Set the output on, but wait for the external trigger signal to start generating waveforms
+
+                    awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+                    awg.set_burst(Burst.INFINITE)
                 else:
                     # Configure the constant voltage
 
@@ -309,10 +314,8 @@ def characterize_piezo(
                     awg.set_arb_waveform(OutputWaveformType.DC)
                     awg.set_dc_offset(fixed_voltage)
 
-                # Set the output on, but wait for the external trigger signal to start generating waveforms
+                    # ARB DC cannot be selected when burst is enabled, and vice versa -> Error message -79
 
-                awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
-                awg.set_burst(Burst.INFINITE)
                 awg.set_output(Output.ON)
 
     # External trigger, coming from the Raspberry Pi -> Start waveform generation

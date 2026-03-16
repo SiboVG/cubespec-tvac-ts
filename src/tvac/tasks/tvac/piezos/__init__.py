@@ -5,7 +5,6 @@ from egse.setup import load_setup
 UI_TAB_DISPLAY_NAME = "Piezo actuators"
 
 
-
 def profiles() -> List[str]:
     """Name of the voltage profiles for the piezo actuators."""
 

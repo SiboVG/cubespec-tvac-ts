@@ -12,7 +12,6 @@ HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
-
 @exec_ui(display_name="Switch-on", use_kernel=True)
 def switch_on_heater(
     heater: Callback(heaters_incl_all, name="Heater") = None,
@@ -44,7 +43,6 @@ def switch_on_heater(
                 print(f"Failed to configure + switch on heater {heater_name}: {e}")
 
     end_observation()
-
 
 
 @exec_ui(display_name="Switch-off", use_kernel=True)

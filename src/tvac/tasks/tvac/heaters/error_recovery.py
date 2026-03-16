@@ -11,7 +11,6 @@ HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
-
 @exec_ui(display_name="Clear alarms", use_kernel=True)
 def clear_alarms(heater: Callback(heaters, name="Heater") = None):
     """Clears the alarms for the Power Supply Unit for the given heater.

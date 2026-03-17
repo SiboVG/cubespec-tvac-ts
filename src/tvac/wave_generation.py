@@ -195,7 +195,7 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
         # Set the output on, but wait for the external trigger signal to start generating waveforms
 
         awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
-        awg.set_burst(Burst.INFINITE)
+        awg.set_burst(Burst.GATED)
         awg.set_output(Output.ON)
 
     # External trigger, coming from the Raspberry Pi -> Start waveform generation
@@ -306,7 +306,7 @@ def characterize_piezo(
                     # Set the output on, but wait for the external trigger signal to start generating waveforms
 
                     awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
-                    awg.set_burst(Burst.INFINITE)
+                    awg.set_burst(Burst.GATED)
                 else:
                     # Configure the constant voltage
 
@@ -357,7 +357,8 @@ def start_signal_trigger(
 
     The given GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
     of the wave generators.  That way it can act as external trigger source, to make sure all waveforms are in sync.
-    The wave generators must therefore be configured in infinite burst with an external trigger source.
+    The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
+    waveforms will be generated as long as the GPIO is high.
 
     Args:
         hostname (str): Hostname of the Raspberry Pi.
@@ -388,7 +389,8 @@ def stop_signal_trigger(
 
     The given GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
     of the wave generators.  That way it can act as external trigger source, to make sure all waveforms are in sync.
-    The wave generators must therefore be configured in infinite burst with an external trigger source.
+    The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
+    waveforms will be generated as long as the GPIO is high.
 
     Args:
         hostname (str): Hostname of the Raspberry Pi.
@@ -417,7 +419,8 @@ def check_trigger(hostname=TRIGGER_SETTINGS["HOSTNAME"]) -> None:
 
     The required GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
     of the wave generators.  That way it can act as external trigger source, to make sure all waveforms are in sync.
-    The wave generators must therefore be configured in infinite burst with an external trigger source.
+    The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
+    waveforms will be generated as long as the GPIO is high.
 
     Args:
         hostname (str): Hostname of the Raspberry Pi.

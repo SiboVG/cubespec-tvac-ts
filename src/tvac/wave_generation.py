@@ -279,6 +279,7 @@ def characterize_piezo(
     setup = setup or load_setup()
 
     wave_generators_setup = setup.gse.wave_generators
+    output_load = wave_generators_setup.calibration.output_load
 
     # Loop over all wave generators
 
@@ -291,7 +292,7 @@ def characterize_piezo(
                     awg.set_waveform_shape(WaveformShape.SINE)
                     awg.set_amplitude(amplitude)
                     awg.set_dc_offset(dc_offset)
-                    awg.set_output_load(50)
+                    awg.set_output_load(output_load)
 
                     # Configure the frequency sweep
 

@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.entry-points."navdict.directive"]
-mat = "tvac.directives:load_mat"
+piezo = "tvac.directives:load_piezo_voltage_profile"
 
 [project.gui-scripts]
 tvac_ui = 'tvac.tasks.tvac.__init__:tvac_ui'

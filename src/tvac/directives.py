@@ -5,11 +5,13 @@ import scipy.io
 from navdict.navdict import get_resource_location
 
 
-def load_mat(resource_name: str, parent_location: Path | None = None) -> dict:
-    """Loads a MatLab file into dictionary.
+def load_piezo_voltage_profile(
+    resource_name: str, parent_location: Path | None = None
+) -> dict:
+    """Loads the voltage profiles for the piezo actuators from the given file.
 
     Args:
-        resource_name (str): Path to the resource, either relative or absolute.  If it starts with "mat//", this
+        resource_name (str): Path to the resource, either relative or absolute.  If it starts with "piezo//", this
                              prefix will be stripped off.
         parent_location (Path): Parent location to be used to complete the relative path of the resource.
 
@@ -17,8 +19,8 @@ def load_mat(resource_name: str, parent_location: Path | None = None) -> dict:
         Dictionary with the content of the MatLab file.
     """
 
-    if resource_name.startswith("mat//"):
-        resource_name = resource_name[5:]
+    if resource_name.startswith("piezo//"):
+        resource_name = resource_name[7:]
 
     if not resource_name:
         raise ValueError(

@@ -2,7 +2,7 @@
 Name=Process Manager
 Comment=Manage CGSE processes in a GUI environment
 GenericName=Process Manager UI
-Exec=/home/labo/bin/start-pm-ui.sh
+Exec=/home/labo/bin/start_pm_ui.sh
 Icon=/home/labo/git/cubespec-tvac-ts/src/tvac/icons/pm_ui.svg
 Type=Application
 StartupNotify=true

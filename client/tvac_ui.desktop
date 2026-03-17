@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=CubeSpec TVAC Task GUI
+Comment=Execute TVAC tasks in a GUI environment
+GenericName=TVAC UI
+Exec=/home/labo/bin/start_tvac_ui.sh
+Icon=/home/labo/git/cubespec-tvac-ts/src/tvac/icons/dashboard.svg
+Type=Application
+StartupNotify=true
+Categories=Development;IDE;
+Terminal=false
+MimeType=text/plain;

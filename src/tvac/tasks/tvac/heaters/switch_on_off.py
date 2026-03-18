@@ -25,11 +25,13 @@ def switch_on_heater(
                      setup.
     """
 
+    setup = load_setup()
+
     if heater.startswith("H"):
         start_observation(f"Configure + switch on heater {heater}")
 
         try:
-            config_psu(heater_name=heater, dissipation=dissipation)
+            config_psu(heater_name=heater, dissipation=dissipation, setup=setup)
         except Exception as e:
             print(f"Failed to configure + switch on heater {heater}: {e}")
 
@@ -38,7 +40,9 @@ def switch_on_heater(
 
         for heater_name in heaters():
             try:
-                config_psu(heater_name=heater_name, dissipation=dissipation)
+                config_psu(
+                    heater_name=heater_name, dissipation=dissipation, setup=setup
+                )
             except Exception as e:
                 print(f"Failed to configure + switch on heater {heater_name}: {e}")
 
@@ -53,11 +57,13 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
         heater: Name of the heater.
     """
 
+    setup = load_setup()
+
     if heater.startswith("H"):
         start_observation(f"Switch off heater {heater}")
 
         try:
-            switch_off_psu(heater_name=heater)
+            switch_off_psu(heater_name=heater, setup=setup)
         except Exception as e:
             print(f"Failed to switch off heater {heater}: {e}")
 
@@ -66,7 +72,7 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
 
         for heater_name in heaters():
             try:
-                switch_off_psu(heater_name=heater_name)
+                switch_off_psu(heater_name=heater_name, setup=setup)
             except Exception as e:
                 print(f"Failed to switch off heater {heater_name}: {e}")
 

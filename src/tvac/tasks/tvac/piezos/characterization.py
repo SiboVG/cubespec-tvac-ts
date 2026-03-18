@@ -43,6 +43,7 @@ def start_piezo_characterization(
         stop_frequency,
         sweep_time,
         fixed_voltage,
+        setup=load_setup(),
     )
 
     end_observation()

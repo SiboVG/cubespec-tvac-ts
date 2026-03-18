@@ -1,4 +1,5 @@
 from egse.observation import start_observation, end_observation
+from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 

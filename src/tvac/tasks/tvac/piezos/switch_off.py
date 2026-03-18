@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from egse.observation import start_observation, end_observation
+from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 
 from tvac.wave_generation import switch_off_awg

@@ -25,7 +25,7 @@ def load_profile(
     start_observation("Configure + switch on wave generators, using profile {profile}")
 
     try:
-        load_voltage_profile(profile=profile)
+        load_voltage_profile(profile=profile, setup=load_setup())
     except Exception as e:
         print(
             f"Failed to configure + switch on wave generators, using profile {profile}: {e}"

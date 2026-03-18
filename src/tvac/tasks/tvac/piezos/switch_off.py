@@ -17,7 +17,7 @@ def switch_off_piezos() -> None:
     start_observation("Switch off wave generation for piezo actuators")
 
     try:
-        switch_off_awg()
+        switch_off_awg(setup=load_setup())
     except Exception as e:
         print(f"Failed to switch off wave generation for piezo actuators: {e}")
 

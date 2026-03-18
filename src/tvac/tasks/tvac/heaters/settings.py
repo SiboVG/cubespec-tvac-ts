@@ -19,4 +19,4 @@ def get_heater_settings(heater: Callback(heaters, name="Heater") = None) -> None
         heater (Callback | None): Name of the heater.
     """
 
-    print_heater_settings(heater_name=heater)
+    print_heater_settings(heater_name=heater, setup=load_setup())

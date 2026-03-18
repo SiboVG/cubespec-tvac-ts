@@ -20,7 +20,7 @@ def clear_alarms(heater: Callback(heaters, name="Heater") = None):
     """
 
     try:
-        clear_psu_alarms(heater_name=heater)
+        clear_psu_alarms(heater_name=heater, setup=load_setup())
     except Exception as e:
         print(f"Failed to clear alarms for heater {heater}: {e}")
 
@@ -34,6 +34,6 @@ def reset(heater: Callback(heaters, name="Heater") = None):
     """
 
     try:
-        clear_psu_alarms(heater_name=heater)
+        clear_psu_alarms(heater_name=heater, setup=load_setup())
     except Exception as e:
         print(f"Failed to reset Power Supply Unit for heater {heater}: {e}")

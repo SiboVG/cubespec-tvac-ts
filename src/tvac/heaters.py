@@ -34,7 +34,7 @@ def print_heater_settings(heater_name: str, setup: Setup = None) -> None:
 
         voltage = psu_device.get_voltage()  # [V]
         voltage_config = psu_device.get_voltage_config()  # [V]
-        ovp = psu_device.get_ocp()  # [V]
+        ovp = psu_device.get_ovp()  # [V]
 
         current = psu_device.get_current()  # [A]
         current_config = psu_device.get_current_config()  # [A]
@@ -43,4 +43,4 @@ def print_heater_settings(heater_name: str, setup: Setup = None) -> None:
         print(f"Power supply to {heater_name} heater ({resistance}Ω):")
         print(f"Voltage: {voltage}V - configured: {voltage_config}V - OVP: {ovp}V")
         print(f"Current: {current}A - configured: {current_config}A - OCP: {ocp}A")
-        print(f"-> Dissipating {voltage * current}")
+        print(f"-> Dissipating {voltage * current}W")

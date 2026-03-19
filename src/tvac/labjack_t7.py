@@ -14,8 +14,12 @@ session lifecycle and output handling.
 """
 
 import datetime
+import os
 import threading
 
+from egse.log import egse_logger
+from egse.metrics import get_metrics_repo
+from egse.setup import Setup
 from labjack import ljm
 from labjack.ljm.ljm import LJMError
 
@@ -106,8 +110,30 @@ class LabJackT7Logger:
         self._connect()
         self._configure()
 
+        # Connection to InfluxDB
+
+        token = os.getenv("INFLUXDB3_AUTH_TOKEN")
+        database_name = os.getenv("INFLUXDB3_DATABASE_NAME")
+
+        if database_name and token:
+            self.metrics_client = get_metrics_repo(
+                "influxdb",
+                {
+                    "host": "http://localhost:8181",
+                    "database": database_name,
+                    "token": token,
+                },
+            )
+            self.metrics_client.connect()
+        else:
+            self.metrics_client = None
+            egse_logger.warning(
+                "INFLUXDB3_AUTH_TOKEN and/or PROJECT environment variable is not set. "
+                "Metrics will not be propagated to InfluxDB."
+            )
+
     @classmethod
-    def from_setup(cls, setup=None):
+    def from_setup(cls, setup: Setup = None):
         """Construct a LabJackT7Logger from a CGSE Setup object.
 
         Reads channel wiring and stream parameters from
@@ -273,6 +299,7 @@ class LabJackT7Logger:
 
         if self._callback:
             self._callback(
+                metrics_client=self.metrics_client,
                 timestamps=timestamps,
                 readings=readings,
                 channel_names=self.channel_names,

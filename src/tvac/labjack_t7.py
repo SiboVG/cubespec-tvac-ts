@@ -267,7 +267,7 @@ class LabJackT7Logger:
             if (
                 self._scan_index - self._anchor_scan_count
             ) >= self._resync_interval_scans:
-                self._t_anchor = datetime.datetime.now()
+                self._t_anchor = datetime.datetime.now(tz=datetime.timezone.utc)
                 self._anchor_scan_count = self._scan_index
                 print(f"[Re-anchored host clock at scan {self._scan_index}]")
 

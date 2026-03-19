@@ -1,3 +1,5 @@
+import socket
+
 import numpy as np
 import pigpio
 import time
@@ -16,7 +18,7 @@ from egse.observation import building_block
 from egse.settings import Settings
 from egse.setup import load_setup, Setup
 
-TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").TRIGGER
+TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
 
 
 class ArbConfig:
@@ -351,9 +353,7 @@ def switch_off_awg(setup: Setup = None):
         awg.reset()
 
 
-def start_signal_trigger(
-    hostname: str = TRIGGER_SETTINGS["HOSTNAME"], gpio: int = TRIGGER_SETTINGS["GPIO"]
-) -> None:
+def start_signal_trigger() -> None:
     """Sets the triggering GPIO pin high on the Raspberry Pi.
 
     The given GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
@@ -361,10 +361,15 @@ def start_signal_trigger(
     The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
     waveforms will be generated as long as the GPIO is high.
 
-    Args:
-        hostname (str): Hostname of the Raspberry Pi.
-        gpio (int): GPIO pin to set high (BCM numbering).
+    Raises:
+        AttributeError: If no settings for external trigger are found.
     """
+
+    if not TRIGGER_SETTINGS:
+        raise AttributeError("No settings for for external trigger")
+
+    hostname = TRIGGER_SETTINGS["HOSTNAME"]
+    gpio = TRIGGER_SETTINGS["GPIO"]  # BCM numbering
 
     # Connect to the Raspberry Pi on port 8888
 
@@ -383,9 +388,7 @@ def start_signal_trigger(
         pi.stop()
 
 
-def stop_signal_trigger(
-    hostname: str = TRIGGER_SETTINGS["HOSTNAME"], gpio: int = TRIGGER_SETTINGS["GPIO"]
-):
+def stop_signal_trigger():
     """Sets the triggering GPIO pin low on the Raspberry Pi.
 
     The given GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
@@ -393,10 +396,15 @@ def stop_signal_trigger(
     The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
     waveforms will be generated as long as the GPIO is high.
 
-    Args:
-        hostname (str): Hostname of the Raspberry Pi.
-        gpio (int): GPIO pin to set high (BCM numbering).
+    Raises:
+        AttributeError: If no settings for external trigger are found.
     """
+
+    if not TRIGGER_SETTINGS:
+        raise AttributeError("No settings for for external trigger")
+
+    hostname = TRIGGER_SETTINGS["HOSTNAME"]
+    gpio = TRIGGER_SETTINGS["GPIO"]  # BCM numbering
 
     # Connect to the Raspberry Pi on port 8888
 
@@ -415,7 +423,7 @@ def stop_signal_trigger(
         pi.stop()
 
 
-def check_trigger(hostname=TRIGGER_SETTINGS["HOSTNAME"]) -> None:
+def check_trigger() -> None:
     """Checks whether a connection can be established with the Raspberry Pi that is used as external trigger source.
 
     The required GPIO pin on the Raspberry Pi is connected to the TRIG/COUNT (DC) IN port (BNC centre) on the rear panel
@@ -423,11 +431,14 @@ def check_trigger(hostname=TRIGGER_SETTINGS["HOSTNAME"]) -> None:
     The wave generators must therefore be configured in gated burst with an external trigger source.  This means that
     waveforms will be generated as long as the GPIO is high.
 
-    Args:
-        hostname (str): Hostname of the Raspberry Pi.
+    Raises:
+        AttributeError: If no settings for external trigger are found.
     """
 
-    import socket
+    if not TRIGGER_SETTINGS:
+        raise AttributeError("No settings for for external trigger")
+
+    hostname = TRIGGER_SETTINGS["HOSTNAME"]
 
     s = socket.socket()
     try:

@@ -289,7 +289,7 @@ def characterize_piezo(
         awg = awg_info.device
 
         if "piezo_channels" in awg_info:  # Exclude the calibration block
-            for piezo_name, channel in awg.piezo_channels.items():
+            for piezo_name, channel in awg_info.piezo_channels.items():
                 awg.set_channel(channel)
 
                 if piezo_name == piezo:

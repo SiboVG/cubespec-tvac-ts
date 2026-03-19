@@ -37,13 +37,13 @@ def start_piezo_characterization(
     start_observation(f"Characterisation of piezo actuator {piezo}")
 
     characterize_piezo(
-        piezo,
-        amplitude,
-        dc_offset,
-        start_frequency,
-        stop_frequency,
-        sweep_time,
-        fixed_voltage,
+        piezo=piezo,
+        amplitude=amplitude,
+        dc_offset=dc_offset,
+        start_frequency=start_frequency,
+        stop_frequency=stop_frequency,
+        sweep_time=sweep_time,
+        fixed_voltage=fixed_voltage,
         setup=load_setup(),
     )
 

@@ -19,14 +19,20 @@ buffers while the session is active.
 
 import bisect
 import csv
-import datetime
 import os
 import threading
 from pathlib import Path
 
+import pandas as pd
+from egse.system import format_datetime
+from influxdb_client_3 import InfluxDBClient3
+
 from egse.env import get_data_storage_location
 from egse.setup import Setup, load_setup
 
+from tvac.labjack_t7 import LabJackT7Logger
+
+ORIGIN = "LJ_SG"
 
 # ---------------------------------------------------------------------------
 # Module-level state for the active logging session
@@ -34,7 +40,9 @@ from egse.setup import Setup, load_setup
 # The strain-gauge GUI operates as a small state machine around a single
 # streaming session. These globals represent that session and are protected
 # by locks where they may be touched from multiple threads/callbacks.
-_logger = None  # LabJackT7Logger, imported lazily to avoid LJM init on import
+_logger: LabJackT7Logger | None = (
+    None  # LabJackT7Logger, imported lazily to avoid LJM init on import
+)
 _session_lock = threading.RLock()
 _csv_lock = threading.Lock()
 _csv_file = None
@@ -49,6 +57,9 @@ _csv_enabled = True
 _save_path = "."
 _base_filename = "labjack_sg_data"
 _max_file_size = 5_000 * 1024
+
+# Metrics defaults (overridden by setup)
+_metrics_enabled = True
 
 # Plot flag
 _plot_enabled = True
@@ -99,7 +110,7 @@ def _sg_debug(message: str) -> None:
     if not os.environ.get("TVAC_SG_DEBUG", "").strip():
         return
 
-    stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    stamp = format_datetime()
     thread_name = threading.current_thread().name
     print(f"[strain_gauge {stamp} {thread_name}] {message}")
 
@@ -152,7 +163,7 @@ def _resolve_csv_save_path(path: str) -> str:
 
     try:
         storage_root = Path(get_data_storage_location()).expanduser()
-        daily_stamp = datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y%m%d")
+        daily_stamp = format_datetime(fmt="%Y%m%d")
         return str(storage_root / "daily" / daily_stamp / candidate)
     except Exception:
         return str(candidate)
@@ -163,21 +174,22 @@ def _snapshot_setup_cfg(setup: Setup) -> dict[str, dict[str, object]]:
     cfg = setup.gse.labjack_t7
     return {
         "stream": {
-            "scan_rate": float(cfg.stream.scan_rate),
-            "resync_interval_s": int(cfg.stream.resync_interval_s),
-            "buffer_size": int(cfg.stream.buffer_size),
+            "scan_rate": cfg.stream.scan_rate,
+            "resync_interval_s": cfg.stream.resync_interval_s,
+            "buffer_size": cfg.stream.buffer_size,
         },
         "csv": {
-            "enabled": bool(cfg.csv.enabled),
-            "save_path": str(cfg.csv.save_path),
-            "base_filename": str(cfg.csv.base_filename),
-            "max_file_size_bytes": int(cfg.csv.max_file_size_bytes),
+            "enabled": cfg.csv.enabled,
+            "save_path": cfg.csv.save_path,
+            "base_filename": cfg.csv.base_filename,
+            "max_file_size_bytes": cfg.csv.max_file_size_bytes,
         },
+        "metrics": {"enabled": cfg.metrics.enabled},
         "plot": {
-            "enabled": bool(cfg.plot.enabled),
-            "window_seconds": float(cfg.plot.window_seconds),
-            "interval_ms": int(cfg.plot.interval_ms),
-            "show_stats": bool(cfg.plot.show_stats),
+            "enabled": cfg.plot.enabled,
+            "window_seconds": cfg.plot.window_seconds,
+            "interval_ms": cfg.plot.interval_ms,
+            "show_stats": cfg.plot.show_stats,
         },
     }
 
@@ -267,6 +279,7 @@ def set_sg_runtime_settings(
     csv_save_path=None,
     csv_base_filename=None,
     csv_max_file_size_bytes=None,
+    metrics_enabled=None,
     plot_enabled=None,
     plot_window_seconds=None,
     plot_interval_ms=None,
@@ -305,6 +318,11 @@ def set_sg_runtime_settings(
     if csv_max_file_size_bytes is not None:
         _runtime_overrides["csv"]["max_file_size_bytes"] = _coerce_positive_int(
             csv_max_file_size_bytes, "csv_max_file_size_bytes"
+        )
+
+    if metrics_enabled is not None:
+        _runtime_overrides["metrics"]["enabled"] = _coerce_bool(
+            metrics_enabled, "metrics_enabled"
         )
 
     if plot_enabled is not None:
@@ -463,13 +481,19 @@ def _rotate_csv(headers):
     _csv_filename = os.path.join(_save_path, fname)
     _csv_file = open(_csv_filename, "w", newline="")
     _csv_writer = csv.writer(_csv_file)
-    _csv_writer.writerow(["Timestamp"] + headers)
+    _csv_writer.writerow(["timestamp"] + headers)
     _file_index += 1
     print(f"Logging to: {_csv_filename}")
 
 
 def _on_stream_data(
-    *, timestamps, readings, channel_names, device_backlog, ljm_backlog
+    *,
+    metrics_client: InfluxDBClient3,
+    timestamps,
+    readings,
+    channel_names,
+    device_backlog,
+    ljm_backlog,
 ):
     """Process one streamed batch from :class:`LabJackT7Logger`.
 
@@ -491,9 +515,10 @@ def _on_stream_data(
         # Copy session state under lock so the rest of the callback can operate
         # without holding the session lock around file I/O or buffer work.
         csv_enabled = _csv_enabled
+        metrics_enabled = _metrics_enabled
         plot_enabled = _plot_enabled
         plot_keep_seconds = _plot_keep_seconds
-        logger = _logger
+        logger: LabJackT7Logger = _logger
 
     if csv_enabled:
         with _csv_lock:
@@ -517,6 +542,17 @@ def _on_stream_data(
 
             if os.path.getsize(_csv_filename) >= _max_file_size:
                 _rotate_csv(channel_names)
+
+    if metrics_enabled:
+        batch = pd.DataFrame(readings, columns=["timestamp"] + channel_names)
+        batch["time"] = pd.to_datetime(batch["timestamp"])
+        batch = batch.drop(columns=["timestamp"])
+
+        metrics_client.write(
+            record=batch,
+            data_frame_measurement_name=ORIGIN.lower(),
+            data_frame_timestamp_column="time",
+        )
 
     if plot_enabled:
         if logger is None or logger.stream_start_time is None:
@@ -556,6 +592,7 @@ def start_sg_logging(setup: Setup = None):
     6. start the stream so data begins arriving through ``_on_stream_data``.
     """
     global _logger, _csv_enabled, _save_path, _base_filename, _max_file_size
+    global _metrics_enabled
     global _plot_enabled, _plot_keep_seconds, _start_ts
     global _file_index, _read_count, _csv_file, _csv_writer, _csv_filename
     global _active_channel_labels
@@ -608,12 +645,14 @@ def start_sg_logging(setup: Setup = None):
         if _csv_enabled:
             os.makedirs(_save_path, exist_ok=True)
 
-        _start_ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        _start_ts = format_datetime()
         _file_index = 0
         _read_count = 0
         _csv_file = None
         _csv_writer = None
         _csv_filename = ""
+
+        _metrics_enabled = bool(effective["metrics"]["enabled"])
 
         _plot_enabled = bool(effective["plot"]["enabled"])
         _plot_keep_seconds = max(1.0, float(effective["plot"]["window_seconds"]) * 1.2)
@@ -643,6 +682,7 @@ def start_sg_logging(setup: Setup = None):
         f"scan_rate={effective['stream']['scan_rate']} "
         f"plot_enabled={effective['plot']['enabled']} "
         f"csv_enabled={effective['csv']['enabled']}"
+        f"metrics_enabled={effective['metrics']['enabled']}",
     )
 
     try:

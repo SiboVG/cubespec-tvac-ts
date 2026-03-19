@@ -349,6 +349,20 @@ def configure_csv(
         print(f"Failed to configure CSV settings: {e}")
 
 
+@exec_ui(display_name="Configure metrics", use_kernel=True)
+def config_metrics(enabled: bool = True) -> None:
+    """Enabled/disabled metrics collection.
+
+    Args:
+        enabled (bool): Whether to enable metrics collection.
+    """
+
+    try:
+        set_sg_runtime_settings(metrics_enabled=enabled)
+    except Exception as e:
+        print(f"Failed to configure metrics settings: {e}")
+
+
 @exec_ui(display_name="Configure plot", use_kernel=True)
 def configure_plot(
     config: SGPlotConfig(

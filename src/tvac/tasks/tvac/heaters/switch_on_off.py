@@ -1,18 +1,19 @@
 from pathlib import Path
 
 from egse.observation import start_observation, end_observation
+from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 
-from tvac.power_supply import config_psu, switch_off_psu, clear_psu_alarms
-from tvac.tasks.tvac.heaters import heaters, dissipation_modes, heaters_incl_all
+from tvac.power_supply import switch_off_psu, config_psu
+from tvac.tasks.tvac.heaters import heaters_incl_all, heaters, dissipation_modes
 
-UI_MODULE_DISPLAY_NAME = "1 - Power supplies"
+UI_MODULE_DISPLAY_NAME = "1 - Switch-on && Switch-off"
 HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
-@exec_ui(display_name="Configuration & switch-on", use_kernel=True)
+@exec_ui(display_name="Switch-on", use_kernel=True)
 def switch_on_heater(
     heater: Callback(heaters_incl_all, name="Heater") = None,
     dissipation: Callback(dissipation_modes, name="Heat dissipation") = None,
@@ -25,11 +26,13 @@ def switch_on_heater(
                      setup.
     """
 
+    setup = load_setup()
+
     if heater.startswith("H"):
         start_observation(f"Configure + switch on heater {heater}")
 
         try:
-            config_psu(heater_name=heater, dissipation=dissipation)
+            config_psu(heater_name=heater, dissipation=dissipation, setup=setup)
         except Exception as e:
             print(f"Failed to configure + switch on heater {heater}: {e}")
 
@@ -38,7 +41,9 @@ def switch_on_heater(
 
         for heater_name in heaters():
             try:
-                config_psu(heater_name=heater_name, dissipation=dissipation)
+                config_psu(
+                    heater_name=heater_name, dissipation=dissipation, setup=setup
+                )
             except Exception as e:
                 print(f"Failed to configure + switch on heater {heater_name}: {e}")
 
@@ -53,11 +58,13 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
         heater: Name of the heater.
     """
 
+    setup = load_setup()
+
     if heater.startswith("H"):
         start_observation(f"Switch off heater {heater}")
 
         try:
-            switch_off_psu(heater_name=heater)
+            switch_off_psu(heater_name=heater, setup=setup)
         except Exception as e:
             print(f"Failed to switch off heater {heater}: {e}")
 
@@ -66,36 +73,8 @@ def switch_off_heater(heater: Callback(heaters_incl_all, name="Heater") = None) 
 
         for heater_name in heaters():
             try:
-                switch_off_psu(heater_name=heater_name)
+                switch_off_psu(heater_name=heater_name, setup=setup)
             except Exception as e:
                 print(f"Failed to switch off heater {heater_name}: {e}")
 
     end_observation()
-
-
-@exec_ui(display_name="Clear alarms", use_kernel=True)
-def clear_alarms(heater: Callback(heaters, name="Heater") = None):
-    """Clears the alarms for the Power Supply Unit for the given heater.
-
-    Args:
-        heater: Name of the heater.
-    """
-
-    try:
-        clear_psu_alarms(heater_name=heater)
-    except Exception as e:
-        print(f"Failed to clear alarms for heater {heater}: {e}")
-
-
-@exec_ui(display_name="Reset", use_kernel=True)
-def reset(heater: Callback(heaters, name="Heater") = None):
-    """Resets the Power Supply Unit for the given heater.
-
-    Args:
-        heater: Name of the heater.
-    """
-
-    try:
-        clear_psu_alarms(heater_name=heater)
-    except Exception as e:
-        print(f"Failed to reset Power Supply Unit for heater {heater}: {e}")

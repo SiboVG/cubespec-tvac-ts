@@ -24,12 +24,18 @@ dependencies = [
     "digilent",
     "keithley-tempcontrol",
     "kikusui-power-supply",
+    "aim-tti-awg",
     "gui-executor",
     "labjack-ljm",
     "matplotlib",
     "pyqt5",
     "pytz",
+    "scipy>=1.15.3",
+    "pigpio",
 ]
+
+[project.entry-points."navdict.directive"]
+piezo = "tvac.directives:load_piezo_voltage_profile"
 
 [project.gui-scripts]
 tvac_ui = 'tvac.tasks.tvac.__init__:tvac_ui'

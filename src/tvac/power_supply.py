@@ -69,7 +69,7 @@ def config_psu(heater_name: str, dissipation: str, setup: Setup = None):
     print(f"Heat dissipation mode: {dissipation}")
     print(f"Voltage: {voltage}V - OVP: {ovp}V")
     print(f"Current: {current}A - OCP: {ocp}A")
-    print(f"-> Dissipating {voltage * current}")
+    print(f"-> Dissipating {voltage * current}W")
 
     psu_device.set_output_status(IntSwitch.ON)
 

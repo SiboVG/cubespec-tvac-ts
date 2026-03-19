@@ -4,7 +4,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent.resolve()
 
-UI_TAB_ORDER = ["heaters", "strain_gauges"]
+UI_TAB_ORDER = ["heaters", "piezos", "strain_gauges"]
 
 
 def _wait_for_ready(self, timeout: float = 60.0):
@@ -25,19 +25,14 @@ def tvac_ui():
 
     client.MyClient.wait_for_ready = _wait_for_ready  # type: ignore[assignment]
 
-    sys.argv = [
-        sys.argv[0],
-        "--verbose",
-        "--module-path",
-        "tvac.tasks.tvac.heaters",
-        "--module-path",
-        "tvac.tasks.tvac.strain_gauges",
-        "--logo",
-        str(HERE / "icons/dashboard.svg"),
-        "--cmd-log",
-        _resolve_cmd_log_dir(),
-        "--app-name",
-        "TVAC GUI",
-        *sys.argv[1:],
-    ]
-    return gui_executor_main()
+
+    cmd = ExternalCommand(
+        f"gui-executor --verbose --module-path tvac.tasks.tvac.heaters "
+        f"--module-path tvac.tasks.tvac.piezos "
+        f"--module-path tvac.tasks.tvac.strain_gauges "
+        f"--kernel-name cubespec-tvac-ts --single "
+        f"--logo {logo_path} --cmd-log {cmd_log} --app-name 'TVAC GUI' "
+        f"{' '.join(sys.argv[1:])}",
+        asynchronous=True,
+    )
+    cmd.start()

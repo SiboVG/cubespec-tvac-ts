@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Process Manager
+Comment=Manage CGSE processes in a GUI environment
+GenericName=Process Manager UI
+Exec=/home/labo/bin/start_pm_ui.sh
+Icon=/home/labo/git/cubespec-tvac-ts/src/tvac/icons/pm_ui.svg
+Type=Application
+StartupNotify=true
+Categories=Development;IDE;
+Terminal=false
+MimeType=text/plain;
+X-Desktop-File-Install-Version=0.24

@@ -285,8 +285,10 @@ def characterize_piezo(
 
     # Loop over all wave generators
 
-    for _, awg in wave_generators_setup.items():
-        if "piezo_channels" in awg:  # Exclude the calibration block
+    for _, awg_info in wave_generators_setup.items():
+        awg = awg_info.device
+
+        if "piezo_channels" in awg_info:  # Exclude the calibration block
             for piezo_name, channel in awg.piezo_channels.items():
                 awg.set_channel(channel)
 

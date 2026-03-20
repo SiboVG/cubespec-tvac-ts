@@ -31,3 +31,7 @@ venv
 # PyCharm IDE
 
 .idea
+
+# Service registry
+
+service_registry.db**

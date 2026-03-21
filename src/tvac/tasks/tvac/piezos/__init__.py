@@ -28,6 +28,36 @@ def piezos() -> List[str]:
     return piezo_list
 
 
+def _sine_sweep_param(param: str) -> float:
+    """Get a sine sweep parameter value from the Setup configuration."""
+    setup = load_setup()
+    return float(getattr(setup.gse.wave_generators.piezo_tests.sine_sweep, param))
+
+
+def sine_sweep_amplitude() -> float:
+    return _sine_sweep_param("amplitude")
+
+
+def sine_sweep_dc_offset() -> float:
+    return _sine_sweep_param("dc_offset")
+
+
+def sine_sweep_start_frequency() -> float:
+    return _sine_sweep_param("start_frequency")
+
+
+def sine_sweep_stop_frequency() -> float:
+    return _sine_sweep_param("stop_frequency")
+
+
+def sine_sweep_time() -> float:
+    return _sine_sweep_param("sweep_time")
+
+
+def sine_sweep_fixed_voltage() -> float:
+    return _sine_sweep_param("fixed_voltage")
+
+
 def piezos_incl_all() -> List[str]:
     """Names of the piezo actuators.  Each of them has a dedicated channel in a dedicated wave generator."""
 

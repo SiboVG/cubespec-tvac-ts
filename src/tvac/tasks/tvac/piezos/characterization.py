@@ -4,6 +4,14 @@ from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
 
 from tvac.tasks.tvac.piezos import piezos
+from tvac.tasks.tvac.piezos import (
+    sine_sweep_amplitude,
+    sine_sweep_dc_offset,
+    sine_sweep_start_frequency,
+    sine_sweep_stop_frequency,
+    sine_sweep_time,
+    sine_sweep_fixed_voltage,
+)
 from tvac.wave_generation import characterize_piezo
 
 UI_MODULE_DISPLAY_NAME = "1 - Characterisation"
@@ -12,12 +20,12 @@ UI_MODULE_DISPLAY_NAME = "1 - Characterisation"
 @exec_ui(display_name="Start characterisation", use_kernel=True)
 def start_piezo_characterization(
     piezo: Callback(piezos, name="Piezo actuator to sweep") = None,
-    amplitude: Callback(float, name="Amplitude for frequency sweep [Vpp]") = 0.2,
-    dc_offset: Callback(float, name="DC offset for frequency sweep [Vdc]") = 0.15,
-    start_frequency: Callback(float, name="Sweep start frequency [Hz]") = 1,
-    stop_frequency: Callback(float, name="Sweep stop frequency [Hz]") = 1500,
-    sweep_time: Callback(float, name="Sweep time [s]") = 40,
-    fixed_voltage: Callback(float, name="Constant voltage (other piezos) [Vdc]") = 0.15,
+    amplitude: Callback(sine_sweep_amplitude, name="Amplitude for frequency sweep [Vpp]") = None,
+    dc_offset: Callback(sine_sweep_dc_offset, name="DC offset for frequency sweep [Vdc]") = None,
+    start_frequency: Callback(sine_sweep_start_frequency, name="Sweep start frequency [Hz]") = None,
+    stop_frequency: Callback(sine_sweep_stop_frequency, name="Sweep stop frequency [Hz]") = None,
+    sweep_time: Callback(sine_sweep_time, name="Sweep time [s]") = None,
+    fixed_voltage: Callback(sine_sweep_fixed_voltage, name="Constant voltage (other piezos) [Vdc]") = None,
 ):
     """Charactersisation of the given piezo actuator.
 

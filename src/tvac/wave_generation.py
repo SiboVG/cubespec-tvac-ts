@@ -209,7 +209,7 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
     """Extracts the configuration of the wave generators from the setup.
 
     Args:
-        profile (str): Voltage profile.
+        profile (str): Voltage profile to be output on the awg.
         setup (Setup): Setup from which to extract the information from the wave generators.
 
     Returns:
@@ -221,8 +221,6 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
     calibration = setup.gse.wave_generators.calibration
 
     # noinspection PyUnresolvedReferences
-    factor = calibration.factor
-    # noinspection PyUnresolvedReferences
     output_load = calibration.output_load
     # noinspection PyUnresolvedReferences
     profile = calibration.profiles[profile]
@@ -232,19 +230,19 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
         name="V1_V",
         frequency=frequency,
         output_load=output_load,
-        signal=profile["V1_V"] * factor,
+        signal=profile["V1_V"],
     )
     v2_config = ArbConfig(
         name="V2_V",
         frequency=frequency,
         output_load=output_load,
-        signal=profile["V2_V"] * factor,
+        signal=profile["V2_V"],
     )
     v3_config = ArbConfig(
         name="V3_V",
         frequency=frequency,
         output_load=output_load,
-        signal=profile["V3_V"] * factor,
+        signal=profile["V3_V"],
     )
 
     return v1_config, v2_config, v3_config, frequency

@@ -2,7 +2,7 @@ from typing import List
 
 from egse.setup import load_setup
 
-UI_TAB_DISPLAY_NAME = "Piezo actuators"
+UI_TAB_DISPLAY_NAME = "Piezo Actuators"
 
 
 def profiles() -> List[str]:
@@ -10,7 +10,7 @@ def profiles() -> List[str]:
 
     setup = load_setup()
 
-    return list(setup.gse.wave_generators.calibration.profiles.keys())
+    return list(setup.gse.wave_generators.piezo_tests.profiles.keys())
 
 
 def piezos() -> List[str]:
@@ -21,7 +21,7 @@ def piezos() -> List[str]:
     setup = load_setup()
 
     for _, awg in setup.gse.wave_generators.items():
-        if "piezo_channels" in awg:  # Exclude the calibration block
+        if "piezo_channels" in awg:  # Exclude the piezo_tests block
             for piezo_name in awg.piezo_channels:
                 piezo_list.append(piezo_name)
 

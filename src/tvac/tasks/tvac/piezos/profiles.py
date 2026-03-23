@@ -33,3 +33,31 @@ def load_profile(
         )
 
     end_observation()
+
+
+@exec_ui(display_name="Plot profile", use_kernel=True)
+def plot_profile(profile: Callback(profiles, name="Voltage profile") = None,) -> None:
+    """Plots the given voltage profile.
+
+    Args:
+        profile: Voltage profile.
+    """
+
+    import matplotlib.pyplot as plt
+
+    setup = load_setup()
+    voltage_profiles = setup.gse.wave_generators.piezo_tests.profiles[profile]
+
+    plt.plot(voltage_profiles["time"], voltage_profiles["V1_V"], label="V1_V")
+    plt.plot(voltage_profiles["time"], voltage_profiles["V2_V"], label="V2_V")
+    plt.plot(voltage_profiles["time"], voltage_profiles["V3_V"], label="V3_V")
+
+    plt.suptitle(f"Voltage profile {profile}")
+    plt.title("(before amplification)")
+
+    plt.xlabel("Time [s]")
+    plt.ylabel("Voltage [V]")
+
+    plt.legend()
+
+    plt.show()

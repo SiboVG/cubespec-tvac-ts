@@ -218,7 +218,7 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
     """
 
     setup = setup or load_setup()
-    calibration = setup.gse.wave_generators.calibration
+    calibration = setup.gse.wave_generators.piezo_tests
 
     # noinspection PyUnresolvedReferences
     output_load = calibration.output_load
@@ -283,7 +283,7 @@ def characterize_piezo(
     setup = setup or load_setup()
 
     wave_generators_setup = setup.gse.wave_generators
-    output_load = wave_generators_setup.calibration.output_load
+    output_load = wave_generators_setup.piezo_tests.output_load
 
     sweep_awg = None
     sweep_channel = None
@@ -291,7 +291,7 @@ def characterize_piezo(
     # Loop over all wave generators
 
     for _, awg_info in wave_generators_setup.items():
-        if "piezo_channels" in awg_info:  # Exclude the calibration block
+        if "piezo_channels" in awg_info:  # Exclude the non-device blocks
             awg = awg_info.device
 
             for piezo_name, channel in awg_info.piezo_channels.items():

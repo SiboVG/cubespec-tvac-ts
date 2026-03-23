@@ -202,6 +202,7 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
 
     # External trigger, coming from the Raspberry Pi -> Start waveform generation
 
+    time.sleep(setup.gse.wave_generators.piezo_tests.trigger_delay)
     start_signal_trigger()
 
 
@@ -345,6 +346,7 @@ def switch_off_awg(setup: Setup = None):
     # External trigger, coming from the Raspberry Pi -> Stop waveform generation
 
     stop_signal_trigger()
+    time.sleep(setup.gse.wave_generators.piezo_tests.trigger_delay)
 
     for awg, channel in zip((awg1, awg1, awg2), (1, 2, 1)):
         awg.set_channel(channel)

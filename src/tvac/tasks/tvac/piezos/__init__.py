@@ -10,7 +10,7 @@ def profiles() -> List[str]:
 
     setup = load_setup()
 
-    return list(setup.gse.wave_generators.calibration.profiles.keys())
+    return list(setup.gse.wave_generators.piezo_tests.profiles.keys())
 
 
 def piezos() -> List[str]:

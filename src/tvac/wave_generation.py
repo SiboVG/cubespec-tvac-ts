@@ -218,12 +218,12 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
     """
 
     setup = setup or load_setup()
-    calibration = setup.gse.wave_generators.calibration
+    piezo_tests = setup.gse.wave_generators.piezo_tests
 
     # noinspection PyUnresolvedReferences
-    output_load = calibration.output_load
+    output_load = piezo_tests.output_load
     # noinspection PyUnresolvedReferences
-    profile = calibration.profiles[profile]
+    profile = piezo_tests.profiles[profile]
     frequency = profile["frequency"]
 
     v1_config = ArbConfig(

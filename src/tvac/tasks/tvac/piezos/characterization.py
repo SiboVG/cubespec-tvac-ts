@@ -2,6 +2,7 @@ from egse.observation import start_observation, end_observation
 from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback
+from reactivex.operators import finally_action
 
 from tvac.tasks.tvac.piezos import piezos
 from tvac.tasks.tvac.piezos import (
@@ -42,17 +43,18 @@ def start_piezo_characterization(
         fixed_voltage (float): Fixed voltage for the other piezo actuators.
     """
 
-    start_observation(f"Characterisation of piezo actuator {piezo}")
+    try:
+        start_observation(f"Characterisation of piezo actuator {piezo}")
 
-    characterize_piezo(
-        piezo=piezo,
-        amplitude=amplitude,
-        dc_offset=dc_offset,
-        start_frequency=start_frequency,
-        stop_frequency=stop_frequency,
-        sweep_time=sweep_time,
-        fixed_voltage=fixed_voltage,
-        setup=load_setup(),
-    )
-
-    end_observation()
+        characterize_piezo(
+            piezo=piezo,
+            amplitude=amplitude,
+            dc_offset=dc_offset,
+            start_frequency=start_frequency,
+            stop_frequency=stop_frequency,
+            sweep_time=sweep_time,
+            fixed_voltage=fixed_voltage,
+            setup=load_setup(),
+        )
+    finally:
+        end_observation()

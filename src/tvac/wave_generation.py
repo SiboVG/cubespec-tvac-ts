@@ -436,6 +436,13 @@ def start_signal_trigger() -> None:
 
         pi.set_mode(gpio, pigpio.OUTPUT)
         pi.write(gpio, 1)
+
+        # Turn on LED indicator if configured
+
+        led_gpio = TRIGGER_SETTINGS.get("LED_GPIO")
+        if led_gpio is not None:
+            pi.set_mode(led_gpio, pigpio.OUTPUT)
+            pi.write(led_gpio, 1)
     finally:
         # Disconnect from the Raspberry Pi
 
@@ -471,6 +478,13 @@ def stop_signal_trigger():
 
         pi.set_mode(gpio, pigpio.OUTPUT)
         pi.write(gpio, 0)
+
+        # Turn off LED indicator if configured
+
+        led_gpio = TRIGGER_SETTINGS.get("LED_GPIO")
+        if led_gpio is not None:
+            pi.set_mode(led_gpio, pigpio.OUTPUT)
+            pi.write(led_gpio, 0)
     finally:
         # Disconnect from the Raspberry Pi
 

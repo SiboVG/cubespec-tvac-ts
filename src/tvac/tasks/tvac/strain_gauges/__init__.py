@@ -17,6 +17,7 @@ def strain_gauges() -> List[str]:
 
 # Stream callbacks
 
+
 def sg_scan_rate() -> float:
     return float(get_sg_effective_settings()["stream"]["scan_rate"])
 
@@ -30,6 +31,7 @@ def sg_buffer_size() -> int:
 
 
 # CSV callbacks
+
 
 def sg_csv_enabled() -> bool:
     return bool(get_sg_effective_settings()["csv"]["enabled"])
@@ -48,6 +50,7 @@ def sg_csv_max_file_size_bytes() -> int:
 
 
 # Plot callbacks
+
 
 def sg_plot_enabled() -> bool:
     return bool(get_sg_effective_settings()["plot"]["enabled"])

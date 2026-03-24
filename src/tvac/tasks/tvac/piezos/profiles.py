@@ -24,7 +24,9 @@ def load_profile(
     """
 
     try:
-        start_observation("Configure + switch on wave generators, using profile {profile}")
+        start_observation(
+            "Configure + switch on wave generators, using profile {profile}"
+        )
 
         try:
             load_voltage_profile(profile=profile, setup=load_setup())
@@ -37,7 +39,9 @@ def load_profile(
 
 
 @exec_ui(display_name="Plot profile", use_kernel=True)
-def plot_profile(profile: Callback(profiles, name="Voltage profile") = None,) -> None:
+def plot_profile(
+    profile: Callback(profiles, name="Voltage profile") = None,
+) -> None:
     """Plots the given voltage profile.
 
     Args:

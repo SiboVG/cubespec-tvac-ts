@@ -44,9 +44,8 @@ def load_piezo_voltage_profile(
 
     signal = piezo_setup[signal_key]
 
-    intra_point_frequency = np.asarray(signal["f_Hz"][0, 0]).item() # [Hz]
+    intra_point_frequency = np.asarray(signal["f_Hz"][0, 0]).item()  # [Hz]
     num_points = len(np.ravel(signal["t_vec_s"][0, 0]))
-
 
     return {
         "frequency": intra_point_frequency / num_points,

@@ -178,7 +178,9 @@ def configure_sg_channel(
 @exec_ui(display_name="Configure stream", use_kernel=True)
 def configure_stream(
     scan_rate: Callback(sg_scan_rate, name="Scan rate [Hz]") = None,
-    resync_interval_s: Callback(sg_resync_interval_s, name="Resync interval [s]") = None,
+    resync_interval_s: Callback(
+        sg_resync_interval_s, name="Resync interval [s]"
+    ) = None,
     buffer_size: Callback(sg_buffer_size, name="Buffer size") = None,
 ) -> None:
     """Set runtime stream settings (applied on next Start logging)."""
@@ -199,7 +201,9 @@ def configure_csv(
     enabled: Callback(sg_csv_enabled, name="Enable CSV logging") = None,
     save_path: Callback(sg_csv_save_path, name="Save path") = None,
     base_filename: Callback(sg_csv_base_filename, name="Base filename") = None,
-    max_file_size_bytes: Callback(sg_csv_max_file_size_bytes, name="Max file size [bytes]") = None,
+    max_file_size_bytes: Callback(
+        sg_csv_max_file_size_bytes, name="Max file size [bytes]"
+    ) = None,
 ) -> None:
     """Set runtime CSV settings (applied on next Start logging)."""
     try:

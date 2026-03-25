@@ -512,12 +512,19 @@ def check_trigger() -> None:
         raise AttributeError("No settings for for external trigger")
 
     hostname = TRIGGER_SETTINGS["HOSTNAME"]
+    gpio = TRIGGER_SETTINGS["GPIO"]  # BCM numbering
 
     s = socket.socket()
     try:
         s.settimeout(3)
         s.connect((hostname, 8888))
         print("Port is reachable!")
+
+        pi = pigpio.pi(hostname, 8888)
+        if pi.connected:
+            pi.set_mode(gpio, pigpio.OUTPUT)
+            print(f"Output status of GPIO {gpio}: {pi.read(gpio)}")
+            pi.stop()
     except Exception as e:
         print("Port not reachable:", e)
     finally:

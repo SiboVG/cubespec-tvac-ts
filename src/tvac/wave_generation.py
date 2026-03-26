@@ -181,7 +181,9 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     )
 
     awg1: Tgf4000Interface = wave_generators_setup.awg1.device
+    awg1.reconnect()  # Mitigate possible connection issues (#54)
     awg2: Tgf4000Interface = wave_generators_setup.awg2.device
+    awg2.reconnect()  # Mitigate possible connection issues (#54)
 
     # We will configure all channels with the requested voltage profile (arbitrary waveform).  Have a look at #52 on
     # more information how this works.
@@ -342,7 +344,8 @@ def characterize_piezo(
 
     for _, awg_info in wave_generators_setup.items():
         if "piezo_channels" in awg_info:  # Exclude the non-device blocks
-            awg = awg_info.device
+            awg: Tgf4000Interface = awg_info.device
+            awg.reconnect()  # Mitigate possible connection issues (#54)
 
             for piezo_name, channel in awg_info.piezo_channels.items():
                 awg.set_channel(channel)
@@ -390,7 +393,9 @@ def switch_off_awg(setup: Setup = None):
     setup = setup or load_setup()
 
     awg1: Tgf4000Interface = setup.gse.wave_generators.awg1.device
+    awg1.reconnect()  # Mitigate possible connection issues (#54)
     awg2: Tgf4000Interface = setup.gse.wave_generators.awg2.device
+    awg2.reconnect()  # Mitigate possible connection issues (#54)
 
     # External trigger, coming from the Raspberry Pi -> Stop waveform generation
 
@@ -507,12 +512,19 @@ def check_trigger() -> None:
         raise AttributeError("No settings for for external trigger")
 
     hostname = TRIGGER_SETTINGS["HOSTNAME"]
+    gpio = TRIGGER_SETTINGS["GPIO"]  # BCM numbering
 
     s = socket.socket()
     try:
         s.settimeout(3)
         s.connect((hostname, 8888))
         print("Port is reachable!")
+
+        pi = pigpio.pi(hostname, 8888)
+        if pi.connected:
+            pi.set_mode(gpio, pigpio.OUTPUT)
+            print(f"Output status of GPIO {gpio}: {pi.read(gpio)}")
+            pi.stop()
     except Exception as e:
         print("Port not reachable:", e)
     finally:

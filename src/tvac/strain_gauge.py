@@ -23,9 +23,8 @@ import os
 import threading
 from pathlib import Path
 
-import pandas as pd
 from egse.system import format_datetime
-from influxdb_client_3 import InfluxDBClient3
+from egse.metricshub.client import MetricsHubSender
 
 from egse.env import get_data_storage_location
 from egse.setup import Setup, load_setup
@@ -61,6 +60,7 @@ _max_file_size = 5_000 * 1024
 # Metrics defaults (overridden by setup)
 _metrics_enabled = True
 _metrics_write_failed = False
+_metrics_sender: MetricsHubSender | None = None
 
 # Plot flag
 _plot_enabled = True
@@ -489,7 +489,6 @@ def _rotate_csv(headers):
 
 def _on_stream_data(
     *,
-    metrics_client: InfluxDBClient3,
     timestamps,
     readings,
     channel_names,
@@ -507,7 +506,7 @@ def _on_stream_data(
     The callback does not talk to the GUI directly. The live plot reads the
     shared ``time_buffer`` and ``ch_buffers`` data structures independently.
     """
-    global _read_count, _csv_writer, _csv_file, _csv_filename
+    global _read_count, _csv_writer, _csv_file, _csv_filename, _metrics_write_failed
 
     if not timestamps or not readings:
         return
@@ -520,6 +519,7 @@ def _on_stream_data(
         plot_enabled = _plot_enabled
         plot_keep_seconds = _plot_keep_seconds
         logger: LabJackT7Logger = _logger
+        sender = _metrics_sender
 
     if csv_enabled:
         with _csv_lock:
@@ -544,21 +544,19 @@ def _on_stream_data(
             if os.path.getsize(_csv_filename) >= _max_file_size:
                 _rotate_csv(channel_names)
 
-    if metrics_enabled:
-        points = [
-            {
-                "measurement": ORIGIN.lower(),
-                "time": ts,
-                "fields": dict(zip(channel_names, row)),
-            }
-            for ts, row in zip(timestamps, readings)
-        ]
+    if metrics_enabled and sender is not None:
         try:
-            metrics_client.write(points)
+            for ts, row in zip(timestamps, readings):
+                sender.send(
+                    {
+                        "measurement": ORIGIN.lower(),
+                        "time": ts.isoformat(),
+                        "fields": dict(zip(channel_names, row)),
+                    }
+                )
         except Exception as exc:
-            global _metrics_write_failed
             if not _metrics_write_failed:
-                print(f"Warning: metrics write to InfluxDB failed: {exc}")
+                print(f"Warning: metrics write to MetricsHub failed: {exc}")
                 _metrics_write_failed = True
             _sg_debug(f"metrics write failed: {exc}")
 
@@ -600,7 +598,7 @@ def start_sg_logging(setup: Setup = None):
     6. start the stream so data begins arriving through ``_on_stream_data``.
     """
     global _logger, _csv_enabled, _save_path, _base_filename, _max_file_size
-    global _metrics_enabled, _metrics_write_failed
+    global _metrics_enabled, _metrics_write_failed, _metrics_sender
     global _plot_enabled, _plot_keep_seconds, _start_ts
     global _file_index, _read_count, _csv_file, _csv_writer, _csv_filename
     global _active_channel_labels
@@ -662,6 +660,11 @@ def start_sg_logging(setup: Setup = None):
 
         _metrics_enabled = bool(effective["metrics"]["enabled"])
         _metrics_write_failed = False
+        if _metrics_enabled:
+            _metrics_sender = MetricsHubSender()
+            _metrics_sender.connect()
+        else:
+            _metrics_sender = None
 
         _plot_enabled = bool(effective["plot"]["enabled"])
         _plot_keep_seconds = max(1.0, float(effective["plot"]["window_seconds"]) * 1.2)
@@ -709,7 +712,7 @@ def start_sg_logging(setup: Setup = None):
 
 def stop_sg_logging():
     """Stop the active strain-gauge logging session and release resources."""
-    global _logger, _csv_file, _csv_filename, _csv_writer, _active_channel_labels
+    global _logger, _csv_file, _csv_filename, _csv_writer, _active_channel_labels, _metrics_sender
 
     with _session_lock:
         logger = _logger
@@ -728,6 +731,11 @@ def stop_sg_logging():
             if _logger is logger:
                 _logger = None
             _active_channel_labels = []
+            sender = _metrics_sender
+            _metrics_sender = None
+
+        if sender is not None:
+            sender.close()
 
         with _csv_lock:
             if _csv_file:

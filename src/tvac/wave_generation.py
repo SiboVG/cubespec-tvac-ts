@@ -38,14 +38,14 @@ class ArbConfig:
         self._name = name
 
         self._frequency = frequency  # Frequency [Hz]
-        self._amplitude = float(np.max(signal))
-        self._dc_offset = float(np.max(signal) / 2.)
-        # # noinspection PyUnresolvedReferences
-        # self._amplitude = float(np.max(signal) - np.min(signal))  # Amplitude [V]
-        # # noinspection PyUnresolvedReferences
-        # self._dc_offset = float(
-        #     (np.max(signal) + np.min(signal)) / 2.0
-        # )  # DC offset [V]
+        # self._amplitude = float(np.max(signal))
+        # self._dc_offset = float(np.max(signal) / 2.0)
+        # noinspection PyUnresolvedReferences
+        self._amplitude = float(np.max(signal) - np.min(signal))  # Amplitude [V]
+        # noinspection PyUnresolvedReferences
+        self._dc_offset = float(
+            (np.max(signal) + np.min(signal)) / 2.0
+        )  # DC offset [V]
         self._output_load = output_load  # Output load [Ω]
 
         self._signal = signal

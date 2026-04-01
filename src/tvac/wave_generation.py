@@ -394,25 +394,27 @@ def switch_off_awg(setup: Setup = None):
     """
 
     setup = setup or load_setup()
-
-    awg1: Tgf4000Interface = setup.gse.wave_generators.awg1.device
-    awg1.reconnect()  # Mitigate possible connection issues (#54)
-    awg2: Tgf4000Interface = setup.gse.wave_generators.awg2.device
-    awg2.reconnect()  # Mitigate possible connection issues (#54)
+    wave_generators_setup = setup.gse.wave_generators
 
     # External trigger, coming from the Raspberry Pi -> Stop waveform generation
 
     stop_signal_trigger()
     time.sleep(setup.gse.wave_generators.piezo_tests.trigger_delay)
+    
+    awg1: Tgf4000Interface = wave_generators_setup.awg1.device
+    awg1.reconnect()  # Mitigate possible connection issues (#54)
+    awg2: Tgf4000Interface = wave_generators_setup.awg2.device
+    awg2.reconnect()  # Mitigate possible connection issues (#54)
 
-    for awg, channel in zip((awg1, awg1, awg2), (1, 2, 1)):
-        awg.set_channel(channel)
-        awg.set_output(Output.OFF)
+    for awg in (awg1, awg2):
+        for channel in (1,2):
+            awg.set_channel(channel)
+            awg.set_output(Output.OFF)
 
-        # Make sure that you return to the default operation settings
-        # (e.g. no frequency sweep, no external trigger, etc.)
+            # Make sure that you return to the default operation settings
+            # (e.g. no frequency sweep, no external trigger, etc.)
 
-        awg.reset()
+            awg.reset()
 
 
 def start_signal_trigger() -> None:

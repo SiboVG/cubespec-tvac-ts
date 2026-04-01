@@ -418,7 +418,7 @@ def switch_off_awg(setup: Setup = None):
             # Make sure that you return to the default operation settings
             # (e.g. no frequency sweep, no external trigger, etc.)
 
-            awg.reset()
+        awg.reset()
 
 
 def start_signal_trigger() -> None:

@@ -176,18 +176,25 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     setup = setup or load_setup()
     wave_generators_setup = setup.gse.wave_generators
 
+    awg_list = []
+    channel_list = []
+
+    for _, awg_info in wave_generators_setup.items():
+        if "piezo_channels" in awg_info:  # Exclude the non-device blocks
+            awg: Tgf4000Interface = awg_info.device
+            awg.reconnect()  # Mitigate possible connection issues (#54)
+
+            awg_list.append(awg)
+
+            for piezo_name, channel in awg_info.piezo_channels.items():
+                channel_list.append(channel)
+
     # Extract the voltage profiles for the piezo actuators
     # -> These contain the amplitude, output load, DC offset, and signal (the frequency comes separately)
 
     v1_config, v2_config, v3_config, frequency = extract_awg_config_from_setup(
         profile, setup=setup
     )
-
-    awg1: Tgf4000Interface = wave_generators_setup.awg1.device
-    awg1.reconnect()  # Mitigate possible connection issues (#54)
-    awg2: Tgf4000Interface = wave_generators_setup.awg2.device
-    awg2.reconnect()  # Mitigate possible connection issues (#54)
-
     # We will configure all channels with the requested voltage profile (arbitrary waveform).  Have a look at #52 on
     # more information how this works.
 
@@ -195,7 +202,7 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     final_dc_offset = []  # DC offset when the soft start ends (i.e. the actual DC offset of the waveform)
 
     for awg, channel, config in zip(
-        (awg1, awg1, awg2), (1, 2, 1), (v1_config, v2_config, v3_config)
+        awg_list, channel_list, (v1_config, v2_config, v3_config)
     ):
         soft_start_dc_offset.append(
             config.dc_offset - config.signal[0]
@@ -244,15 +251,12 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
         for start, end in zip(soft_start_dc_offset, final_dc_offset)
     ]
 
-    for dc_offset_v1, dc_offset_v2, dc_offset_v3 in zip(*soft_start_dc_offset_grid):
-        awg1.set_channel(1)
-        awg1.set_dc_offset(dc_offset_v1)
-        awg1.set_channel(2)
-        awg1.set_dc_offset(dc_offset_v2)
-        awg2.set_channel(1)
-        awg2.set_dc_offset(dc_offset_v3)
+    for dc_offset_list in zip(*soft_start_dc_offset_grid):
+        for awg, channel, dc_offset in zip(awg_list, channel_list, dc_offset_list):
+            awg.set_channel(channel)
+            awg.set_dc_offset(dc_offset)
 
-        time.sleep(delta_time)
+            time.sleep(delta_time / len(channel_list))
 
     # External trigger, coming from the Raspberry Pi -> Start waveform generation
 
@@ -400,7 +404,7 @@ def switch_off_awg(setup: Setup = None):
 
     stop_signal_trigger()
     time.sleep(setup.gse.wave_generators.piezo_tests.trigger_delay)
-    
+
     awg1: Tgf4000Interface = wave_generators_setup.awg1.device
     awg1.reconnect()  # Mitigate possible connection issues (#54)
     awg2: Tgf4000Interface = wave_generators_setup.awg2.device

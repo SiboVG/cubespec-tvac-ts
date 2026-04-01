@@ -411,7 +411,7 @@ def switch_off_awg(setup: Setup = None):
     awg2.reconnect()  # Mitigate possible connection issues (#54)
 
     for awg in (awg1, awg2):
-        for channel in (1,2):
+        for channel in (1, 2):
             awg.set_channel(channel)
             awg.set_output(Output.OFF)
 

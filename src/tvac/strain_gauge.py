@@ -712,7 +712,13 @@ def start_sg_logging(setup: Setup = None):
 
 def stop_sg_logging():
     """Stop the active strain-gauge logging session and release resources."""
-    global _logger, _csv_file, _csv_filename, _csv_writer, _active_channel_labels, _metrics_sender
+    global \
+        _logger, \
+        _csv_file, \
+        _csv_filename, \
+        _csv_writer, \
+        _active_channel_labels, \
+        _metrics_sender
 
     with _session_lock:
         logger = _logger

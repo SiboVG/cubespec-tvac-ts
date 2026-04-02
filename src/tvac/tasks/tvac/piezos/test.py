@@ -66,3 +66,101 @@ def sine_sweep(
     )
 
     end_observation()
+
+
+@exec_ui(display_name="Ramp", use_kernel=True)
+# def ramp(amplitude: float = 10, period: float = 10, piezo_list: PiezoList([Callback(piezos, name="Piezo actuator")], ["V1_V"])= None)-> None:
+def ramp(
+    amplitude: float,
+    period: float,
+    piezo_list: ListList([Callback(piezos, name="Piezo actuator")], ["V1_V"]),
+) -> None:
+    """Switches off the Wave Generators."""
+
+    start_observation("Switch off wave generation for piezo actuators")
+
+    try:
+        wave_generation.ramp(amplitude, period, piezo_list, setup=load_setup())
+    except Exception as e:
+        print(f"Failed to switch off wave generation for piezo actuators: {e}")
+
+    end_observation()
+
+
+# class PiezoList(ListList):
+#     def __init__(
+#         self,
+#         literals: List[str | Callable],
+#         defaults: List = None,
+#         name: str = None,
+#     ):
+#         super().__init__(literals, defaults, name)
+#
+#     def get_widget(self):
+#         return PiezoListWidget(self)
+#
+#
+# class PiezoListWidget(QWidget):
+#     # class ListListWidget(UQWidget):
+#     def __init__(self, type_object: ListList):
+#         super().__init__()
+#
+#         self._type_object = type_object
+#         self._rows: List[List] = []
+#         self._rows_layout = QVBoxLayout()
+#
+#         row, fields = self._row("+", expand_default=True)
+#
+#         self._rows_layout.addWidget(row)
+#         self._rows_layout.setContentsMargins(0, 0, 0, 0)
+#
+#         self._rows.append(fields)
+#
+#         self.setLayout(self._rows_layout)
+#
+#     def get_value(self) -> List[List]:
+#         return [
+#             [self._cast_arg(f, t) for f, (t, d) in zip(field, self._type_object)]
+#             for field in self._rows
+#         ]
+#
+#     def _row(self, row_button: str, expand_default: bool = False):
+#         widget = QWidget()
+#
+#         hbox = QHBoxLayout()
+#
+#         fields = []
+#         for x, y in self._type_object:
+#             drop_down_menu = combo_box_from_list(piezos())
+#             drop_down_menu.setCurrentIndex(0)
+#             field = drop_down_menu
+#
+#             fields.append(field)
+#             type_hint = QLabel(x if isinstance(x, str) else x.__name__)
+#             type_hint.setStyleSheet("color: gray")
+#             hbox.addWidget(field)
+#             hbox.addWidget(type_hint)
+#
+#         if row_button == "+":
+#             button = IconLabel(icon_path=HERE / "icons/add.svg")
+#             button.mousePressEvent = partial(self._add_row, "x")
+#         elif row_button == "x":
+#             button = IconLabel(icon_path=HERE / "icons/delete.svg")
+#             button.mousePressEvent = partial(self._delete_row, widget, fields)
+#         else:
+#             raise ValueError(f"Unknown row_button '{row_button}', use '+' or 'x'")
+#
+#         hbox.addWidget(button)
+#         hbox.setContentsMargins(0, 0, 0, 0)
+#         widget.setLayout(hbox)
+#
+#         return widget, fields
+#
+#     def _add_row(self, button_type: str, *args):
+#         row, fields = self._row(button_type)
+#         self._rows_layout.addWidget(row)
+#         self._rows.append(fields)
+#
+#     def _delete_row(self, widget: QWidget, fields: List, *args):
+#         self._rows_layout.removeWidget(widget)
+#         self._rows.remove(fields)

@@ -390,6 +390,54 @@ def sine_sweep(
 
 
 @building_block
+def ramp(
+    amplitude: float, period: float, piezo_list: list[str], setup: Setup = None
+) -> None:
+    """Ramps the voltage up and down for one piezo actuator after the other.
+
+    Args:
+        amplitude (float): Amplitude of the ramp [Vpp].
+        period (float): Period of the ramp [s].
+        setup (Setup): Setup from which to extract the information from the piezo actuators and corresponding Wave
+                       Generators.
+    """
+
+    setup = setup or load_setup()
+    wave_generators_setup = setup.gse.wave_generators
+
+    info = {}
+
+    for _, awg_info in wave_generators_setup.items():
+        if "piezo_channels" in awg_info:  # Exclude the non-device blocks
+            awg: Tgf4000Interface = awg_info.device
+            awg.reconnect()  # Mitigate possible connection issues (#54)
+
+            for piezo_name, channel in awg_info.piezo_channels.items():
+                info[piezo_name] = (awg, channel)
+
+    for piezo in piezo_list:
+        awg, channel = info[piezo]
+
+        awg.set_channel(channel)
+        awg.set_waveform_shape(WaveformShape.RAMP)
+        awg.set_amplitude(amplitude)
+        awg.set_dc_offset(0)
+        awg.set_output_load(
+            wave_generators_setup.piezo_tests.output_load
+        )  # Output load
+        awg.set_period(period)  # Period [s]
+
+        awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+        awg.set_burst(Burst.NCYC)
+        awg.set_burst_count(1)
+        awg.set_output(Output.ON)
+
+        start_signal_trigger()
+        time.sleep(1)
+        stop_signal_trigger()
+
+
+@building_block
 def switch_off_awg(setup: Setup = None):
     """Switches off the wave generators.
 

@@ -307,7 +307,7 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
 
 
 @building_block
-def characterize_piezo(
+def sine_sweep(
     piezo: str,
     amplitude: float,
     dc_offset: float,

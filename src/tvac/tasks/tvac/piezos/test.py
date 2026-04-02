@@ -1,9 +1,9 @@
 from egse.observation import start_observation, end_observation
 from egse.setup import load_setup
 from gui_executor.exec import exec_ui
-from gui_executor.utypes import Callback
-from reactivex.operators import finally_action
+from gui_executor.utypes import Callback, ListList
 
+from tvac import wave_generation
 from tvac.tasks.tvac.piezos import piezos
 from tvac.tasks.tvac.piezos import (
     sine_sweep_amplitude,
@@ -13,13 +13,12 @@ from tvac.tasks.tvac.piezos import (
     sine_sweep_time,
     sine_sweep_fixed_voltage,
 )
-from tvac.wave_generation import characterize_piezo
 
-UI_MODULE_DISPLAY_NAME = "1 - Characterisation"
+UI_MODULE_DISPLAY_NAME = "1 - Test"
 
 
-@exec_ui(display_name="Start characterisation", use_kernel=True)
-def start_piezo_characterization(
+@exec_ui(display_name="Sine sweep", use_kernel=True)
+def sine_sweep(
     piezo: Callback(piezos, name="Piezo actuator to sweep") = None,
     amplitude: Callback(
         sine_sweep_amplitude, name="Amplitude for frequency sweep [Vpp]"
@@ -38,7 +37,7 @@ def start_piezo_characterization(
         sine_sweep_fixed_voltage, name="Constant voltage (other piezos) [Vdc]"
     ) = None,
 ):
-    """Charactersisation of the given piezo actuator.
+    """Performs a sine sweep of the given piezo actuator, while keeping the others as a fixed voltage.
 
     For the given piezo actuator, we configure (and switch on) a frequency sweep.  For the other piezo actuators, we
     configure a constant voltage.
@@ -53,9 +52,9 @@ def start_piezo_characterization(
         fixed_voltage (float): Fixed voltage for the other piezo actuators.
     """
 
-    start_observation(f"Characterisation of piezo actuator {piezo}")
+    start_observation(f"Sine sweep of piezo actuator {piezo}")
 
-    characterize_piezo(
+    wave_generation.sine_sweep(
         piezo=piezo,
         amplitude=amplitude,
         dc_offset=dc_offset,

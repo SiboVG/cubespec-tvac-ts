@@ -4,7 +4,7 @@ from gui_executor.exec import exec_ui
 
 from tvac.wave_generation import check_trigger
 
-UI_MODULE_DISPLAY_NAME = "4 - External trigger"
+UI_MODULE_DISPLAY_NAME = "5 - External trigger"
 HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 

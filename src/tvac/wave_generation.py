@@ -21,6 +21,17 @@ from egse.setup import load_setup, Setup
 TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
 
 
+def _check_awg_error(awg: "Tgf4000Interface", step: str) -> None:
+    """Query and log the AWG error registers after the given step."""
+    # esr = awg.get_std_event_status_register()
+    time.sleep(0.1)
+    eer = awg.execution_error_register()
+    if eer != 0:
+        print(f"AWG error after '{step}': EER={eer}")
+    else:
+        print(f"AWG OK after '{step}'")
+
+
 class ArbConfig:
     def __init__(
         self, name: str, frequency: float, output_load: float | str, signal: np.ndarray
@@ -215,25 +226,42 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
         output_waveform_type = OutputWaveformType(f"ARB{channel}")
 
         awg.set_channel(channel)  # Select the channel (1/2)
+        _check_awg_error(awg, f"ch{channel} set_channel")
         awg.set_waveform_shape(WaveformShape.ARB)  # Select "ARB" waveform
+        _check_awg_error(awg, f"ch{channel} set_waveform_shape")
         awg.set_amplitude(config.amplitude)  # Amplitude [Vpp]
+        _check_awg_error(awg, f"ch{channel} set_amplitude")
         awg.set_output_load(config.output_load)  # Output load
+        _check_awg_error(awg, f"ch{channel} set_output_load")
         awg.set_dc_offset(soft_start_dc_offset[-1])  # DC offset (soft start)
+        _check_awg_error(awg, f"ch{channel} set_dc_offset")
         awg.set_frequency(frequency)  # Frequency [Hz]
+        _check_awg_error(awg, f"ch{channel} set_frequency")
         awg.define_arb_waveform(output_waveform_type, config.name, Output.OFF)
+        _check_awg_error(
+            awg, f"ch{channel} define_arb_waveform({output_waveform_type})"
+        )
         awg.load_arb1_ascii(
             config.get_signal_as_hex()
         ) if channel == 1 else awg.load_arb2_ascii(
             config.get_signal_as_hex()
         )  # Waveform shape
+        time.sleep(2.5)
+        _check_awg_error(
+            awg, f"ch{channel} load_arb{'1' if channel == 1 else '2'}_ascii"
+        )
         time.sleep(2)
         awg.set_arb_waveform(output_waveform_type)
+        _check_awg_error(awg, f"ch{channel} set_arb_waveform({output_waveform_type})")
 
         # Set the output on, but wait for the external trigger signal to start generating waveforms
 
         awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+        _check_awg_error(awg, f"ch{channel} set_burst_trigger_source")
         awg.set_burst(Burst.GATED)
+        _check_awg_error(awg, f"ch{channel} set_burst")
         awg.set_output(Output.ON)
+        _check_awg_error(awg, f"ch{channel} set_output")
 
     # Soft start -> Linear increase in DC offset
 
@@ -307,7 +335,7 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
 
 
 @building_block
-def characterize_piezo(
+def sine_sweep(
     piezo: str,
     amplitude: float,
     dc_offset: float,
@@ -387,6 +415,65 @@ def characterize_piezo(
 
     sweep_awg.set_channel(sweep_channel)
     sweep_awg.set_output(Output.ON)
+
+
+@building_block
+def ramp(
+    amplitude: float, period: float, piezo_list: list[str], setup: Setup = None
+) -> None:
+    """Ramps the voltage up and down for one piezo actuator after the other.
+
+    Args:
+        amplitude (float): Amplitude of the ramp [Vpp].
+        period (float): Period of the ramp [s].
+        piezo_list (list[str]): List of piezo actuator names.
+        setup (Setup): Setup from which to extract the information from the piezo actuators and corresponding Wave
+                       Generators.
+    """
+
+    setup = setup or load_setup()
+    wave_generators_setup = setup.gse.wave_generators
+
+    info = {}
+
+    for _, awg_info in wave_generators_setup.items():
+        if "piezo_channels" in awg_info:  # Exclude the non-device blocks
+            awg: Tgf4000Interface = awg_info.device
+            awg.reconnect()  # Mitigate possible connection issues (#54)
+
+            for piezo_name, channel in awg_info.piezo_channels.items():
+                info[piezo_name] = (awg, channel)
+
+    for piezo in piezo_list:
+        awg, channel = info[piezo]
+
+        awg.set_channel(channel)
+        awg.set_waveform_shape(WaveformShape.ARB)  # FIXME
+        awg.set_amplitude(amplitude)
+        awg.set_dc_offset(amplitude / 2.0)
+        awg.set_output_load(
+            wave_generators_setup.piezo_tests.output_load
+        )  # Output load
+        awg.set_period(period)  # Period [s]
+
+        output_waveform_type = OutputWaveformType.TRIANGULAR
+        awg.set_arb_waveform(output_waveform_type)
+
+        awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+        awg.set_burst(Burst.NCYC)
+        awg.set_burst_count(1)
+        awg.set_output(Output.ON)
+
+        start_time = time.monotonic()
+
+        start_signal_trigger()
+        time.sleep(1)
+        stop_signal_trigger()
+
+        while (time.monotonic() - start_time) < period:
+            time.sleep(0.5)
+
+        awg.set_output(Output.OFF)
 
 
 @building_block

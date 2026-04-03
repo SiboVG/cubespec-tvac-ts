@@ -21,6 +21,17 @@ from egse.setup import load_setup, Setup
 TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
 
 
+def _check_awg_error(awg: "Tgf4000Interface", step: str) -> None:
+    """Query and log the AWG error registers after the given step."""
+    # esr = awg.get_std_event_status_register()
+    time.sleep(0.1)
+    eer = awg.execution_error_register()
+    if eer != 0:
+        print(f"AWG error after '{step}': EER={eer}")
+    else:
+        print(f"AWG OK after '{step}'")
+
+
 class ArbConfig:
     def __init__(
         self, name: str, frequency: float, output_load: float | str, signal: np.ndarray
@@ -215,25 +226,42 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
         output_waveform_type = OutputWaveformType(f"ARB{channel}")
 
         awg.set_channel(channel)  # Select the channel (1/2)
+        _check_awg_error(awg, f"ch{channel} set_channel")
         awg.set_waveform_shape(WaveformShape.ARB)  # Select "ARB" waveform
+        _check_awg_error(awg, f"ch{channel} set_waveform_shape")
         awg.set_amplitude(config.amplitude)  # Amplitude [Vpp]
+        _check_awg_error(awg, f"ch{channel} set_amplitude")
         awg.set_output_load(config.output_load)  # Output load
+        _check_awg_error(awg, f"ch{channel} set_output_load")
         awg.set_dc_offset(soft_start_dc_offset[-1])  # DC offset (soft start)
+        _check_awg_error(awg, f"ch{channel} set_dc_offset")
         awg.set_frequency(frequency)  # Frequency [Hz]
+        _check_awg_error(awg, f"ch{channel} set_frequency")
         awg.define_arb_waveform(output_waveform_type, config.name, Output.OFF)
+        _check_awg_error(
+            awg, f"ch{channel} define_arb_waveform({output_waveform_type})"
+        )
         awg.load_arb1_ascii(
             config.get_signal_as_hex()
         ) if channel == 1 else awg.load_arb2_ascii(
             config.get_signal_as_hex()
         )  # Waveform shape
+        time.sleep(2.5)
+        _check_awg_error(
+            awg, f"ch{channel} load_arb{'1' if channel == 1 else '2'}_ascii"
+        )
         time.sleep(2)
         awg.set_arb_waveform(output_waveform_type)
+        _check_awg_error(awg, f"ch{channel} set_arb_waveform({output_waveform_type})")
 
         # Set the output on, but wait for the external trigger signal to start generating waveforms
 
         awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+        _check_awg_error(awg, f"ch{channel} set_burst_trigger_source")
         awg.set_burst(Burst.GATED)
+        _check_awg_error(awg, f"ch{channel} set_burst")
         awg.set_output(Output.ON)
+        _check_awg_error(awg, f"ch{channel} set_output")
 
     # Soft start -> Linear increase in DC offset
 

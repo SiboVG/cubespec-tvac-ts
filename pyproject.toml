@@ -32,10 +32,17 @@ dependencies = [
     "pytz",
     "scipy>=1.15.3",
     "pigpio",
+    "invoke",
 ]
 
 [project.entry-points."navdict.directive"]
 piezo = "tvac.directives:load_piezo_voltage_profile"
+
+[project.entry-points."cgse.version"]
+cubespec-tvac-ts = 'egse.version:get_version_installed'
+
+[project.scripts]
+update_tvac = "scripts.update_tvac:cli"
 
 [project.gui-scripts]
 tvac_ui = 'tvac.tasks.tvac.__init__:tvac_ui'

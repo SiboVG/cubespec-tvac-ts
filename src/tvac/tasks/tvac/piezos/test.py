@@ -52,7 +52,7 @@ def sine_sweep(
         fixed_voltage (float): Fixed voltage for the other piezo actuators.
     """
 
-    start_observation(f"Sine sweep of piezo actuator {piezo}")
+    start_observation(f"Sine sweep for piezo actuator {piezo}")
 
     wave_generation.sine_sweep(
         piezo=piezo,

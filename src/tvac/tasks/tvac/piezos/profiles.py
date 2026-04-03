@@ -23,7 +23,7 @@ def load_profile(
         profile: Voltage profile.
     """
 
-    start_observation("Configure + switch on wave generators, using profile {profile}")
+    start_observation(f"Configure + switch on wave generators, using profile {profile}")
 
     try:
         load_voltage_profile(profile=profile, setup=load_setup())

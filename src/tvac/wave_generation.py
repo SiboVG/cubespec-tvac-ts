@@ -21,14 +21,14 @@ from egse.setup import load_setup, Setup
 TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
 
 
-def _check_awg_error(awg: "Tgf4000Interface", step: str) -> None:
+def _check_awg_error(awg: "Tgf4000Interface", step: str, print_ok: bool = False) -> None:
     """Query and log the AWG error registers after the given step."""
     # esr = awg.get_std_event_status_register()
     _wait_for_command(awg)
     eer = awg.execution_error_register()
     if eer != 0:
         print(f"AWG error after '{step}': EER={eer}")
-    else:
+    elif print_ok:
         print(f"AWG OK after '{step}'")
 
 

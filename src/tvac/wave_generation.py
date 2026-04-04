@@ -24,13 +24,16 @@ TRIGGER_SETTINGS = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
 def _check_awg_error(awg: "Tgf4000Interface", step: str) -> None:
     """Query and log the AWG error registers after the given step."""
     # esr = awg.get_std_event_status_register()
-    time.sleep(0.1)
+    _wait_for_command(awg)
     eer = awg.execution_error_register()
     if eer != 0:
         print(f"AWG error after '{step}': EER={eer}")
     else:
         print(f"AWG OK after '{step}'")
 
+
+def _wait_for_command(awg: "Tgf4000Interface"):
+    time.sleep(0.1)      # awg.wait() may also work and faster, but just to be sure, use time.sleep
 
 class ArbConfig:
     def __init__(
@@ -447,22 +450,35 @@ def ramp(
     for piezo in piezo_list:
         awg, channel = info[piezo]
 
+        # FIXME: it's not clean to have to call `_wait_for_command(awg)` after every command.
+        #  Is there a way to include this in the commanding itself?
         awg.set_channel(channel)
+        _wait_for_command(awg)
         awg.set_waveform_shape(WaveformShape.ARB)  # FIXME
+        _wait_for_command(awg)
         awg.set_amplitude(amplitude)
+        _wait_for_command(awg)
         awg.set_dc_offset(amplitude / 2.0)
+        _wait_for_command(awg)
         awg.set_output_load(
             wave_generators_setup.piezo_tests.output_load
         )  # Output load
+        _wait_for_command(awg)
         awg.set_period(period)  # Period [s]
+        _wait_for_command(awg)
 
         output_waveform_type = OutputWaveformType.TRIANGULAR
         awg.set_arb_waveform(output_waveform_type)
+        _wait_for_command(awg)
 
         awg.set_burst_trigger_source(TriggerSource.EXTERNAL)
+        _wait_for_command(awg)
         awg.set_burst(Burst.NCYC)
+        _wait_for_command(awg)
         awg.set_burst_count(1)
+        _wait_for_command(awg)
         awg.set_output(Output.ON)
+        _wait_for_command(awg)
 
         start_time = time.monotonic()
 

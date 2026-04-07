@@ -105,6 +105,7 @@ class LabJackT7Logger:
         self._resync_interval_scans = int(scan_rate * resync_interval_s)
 
         self._connect()
+        self.stop_stream()  # Stop streaming in case it was still active (otherwise, we cannot configure the device)
         self._configure()
 
     @classmethod

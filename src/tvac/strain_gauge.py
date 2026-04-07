@@ -723,8 +723,9 @@ def stop_sg_logging():
     with _session_lock:
         logger = _logger
         if logger is None:
-            print("No strain-gauge logging session is active.")
-            return
+            print("No strain-gauge logging session is active. Starting new session to close the device.")
+            _logger = LabJackT7Logger(ain_channels=[])
+            logger = _logger
 
     _sg_debug("stop requested")
 

@@ -63,7 +63,7 @@ _metrics_write_failed = False
 _metrics_sender: MetricsHubSender | None = None
 
 # Plot flag
-_plot_enabled = True
+_plot_enabled = False
 _plot_keep_seconds = 60.0
 
 # Runtime overrides applied on top of the Setup values. These overrides are

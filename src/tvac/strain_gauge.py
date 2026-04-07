@@ -536,7 +536,7 @@ def _on_stream_data(
 
             _read_count += 1
             if _read_count % 10 == 0:
-                print(
+                _sg_debug(
                     f"Read #{_read_count}: {len(timestamps)} scans | "
                     f"Device backlog: {device_backlog} | LJM backlog: {ljm_backlog}"
                 )

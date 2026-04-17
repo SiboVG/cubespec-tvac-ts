@@ -4,22 +4,22 @@ from egse.observation import start_observation, end_observation
 from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 
-from tvac.wave_generation import switch_off_awg
+from tvac import wave_generation
 
-UI_MODULE_DISPLAY_NAME = "3 - Switch-off"
+UI_MODULE_DISPLAY_NAME = "3 - Stop wave generation + reset"
 HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
-@exec_ui(display_name="Switch-off", use_kernel=True)
-def switch_off_piezos() -> None:
-    """Switches off the Wave Generators."""
+@exec_ui(display_name="Stop wave generation + reset", use_kernel=True)
+def stop_wave_generation_and_reset() -> None:
+    """Stops the wave generation and resets the wave generators."""
 
-    start_observation("Switch off wave generation for piezo actuators")
+    start_observation("Stop wave generation + reset wave generators")
 
     try:
-        switch_off_awg(setup=load_setup())
+        wave_generation.stop_wave_generation_and_reset(setup=load_setup())
     except Exception as e:
-        print(f"Failed to switch off wave generation for piezo actuators: {e}")
+        print(f"Failed to stop wave generation and reset wave generators: {e}")
 
     end_observation()

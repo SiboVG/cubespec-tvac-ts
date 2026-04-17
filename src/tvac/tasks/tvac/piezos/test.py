@@ -75,6 +75,10 @@ def sine_sweep(
 
     setup = load_setup()
 
+    # Interrupt ongoing logging
+
+    disable_sg_logging()
+
     # Configure + enable the logging of the requested strain gauge
 
     enable_sg_logging(sg_name=strain_gauge, scan_rate=scan_rate, setup=setup)
@@ -94,7 +98,7 @@ def sine_sweep(
 
     # Let the sine sweep go on for the requested duration
 
-    time.sleep(sweep_time)
+    time.sleep(float(sweep_time))
 
     # Stop the sine sweep
 

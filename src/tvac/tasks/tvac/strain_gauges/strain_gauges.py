@@ -144,7 +144,7 @@ class SGChannelConfigWidget(UQWidget):
         return config
 
 
-@exec_ui(display_name="Query Settings", use_kernel=True)
+@exec_ui(display_name="Query Settings", use_kernel=True, immediate_run=True)
 def settings() -> None:
     """Print effective SG settings (Setup + runtime overrides)."""
     print(get_sg_settings())
@@ -299,7 +299,7 @@ def stop_logging() -> None:
         print(f"Failed to stop strain-gauge logging: {e}")
 
 
-@exec_ui(display_name="Status", use_kernel=True)
+@exec_ui(display_name="Status", use_kernel=True, immediate_run=True)
 def status() -> None:
     """Print the current strain-gauge logging status."""
     print(get_sg_status())

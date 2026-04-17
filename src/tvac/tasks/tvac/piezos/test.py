@@ -1,12 +1,13 @@
-from itertools import chain
-
+import time
 from egse.observation import start_observation, end_observation
 from egse.setup import load_setup
 from gui_executor.exec import exec_ui
 from gui_executor.utypes import Callback, ListList
+from itertools import chain
 
 from tvac import wave_generation
-from tvac.tasks.tvac.piezos import piezos
+from tvac.strain_gauge import enable_sg_logging, disable_sg_logging
+from tvac.tasks.tvac.piezos import piezos, sine_sweep_sg_scan_rate
 from tvac.tasks.tvac.piezos import (
     sine_sweep_amplitude,
     sine_sweep_dc_offset,

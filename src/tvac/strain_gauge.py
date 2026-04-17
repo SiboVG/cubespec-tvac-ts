@@ -23,6 +23,7 @@ import os
 import threading
 from pathlib import Path
 
+from egse.observation import building_block, request_obsid
 from egse.system import format_datetime
 from egse.metricshub.client import MetricsHubSender
 
@@ -723,7 +724,9 @@ def stop_sg_logging():
     with _session_lock:
         logger = _logger
         if logger is None:
-            print("No strain-gauge logging session is active. Starting new session to close the device.")
+            print(
+                "No strain-gauge logging session is active. Starting new session to close the device."
+            )
             _logger = LabJackT7Logger(ain_channels=[])
             logger = _logger
 
@@ -792,3 +795,131 @@ def trim_plot_buffers(keep_seconds: float):
             del time_buffer[:idx]
             for buf in ch_buffers:
                 del buf[:idx]
+
+
+@building_block
+def enable_sg_logging(sg_name: str, scan_rate: float, setup: Setup) -> None:
+    """Enables the logging for the given strain gauge.
+
+    The following steps are performed:
+
+        - For the given strain gauge, set the voltage ranges and resolution index (from the setup), and enable its
+          channel,
+        - Set the scan rate for the logging of the requested strain gauge,
+        - Enable HK and metrics,
+        - Make sure that the HK ends up in the folder, dedicated to the current observation, and that the filenames
+          also refer to the current observation (since this function is a building block, it can only be run in the
+          context of an observation, so the obsid is guaranteed to be not None),
+        - Start the logging of the LabJack.
+    """
+
+    setup = setup or load_setup()
+
+    sg_setup = setup.gse.labjack_t7.channels[sg_name]
+    stream_setup = setup.gse.labjack_t7.stream
+
+    # Set the voltage ranges + resolution index (for the requested strain gauge), and enable the channel
+
+    set_sg_channel_runtime_settings(
+        sg_name=sg_name,
+        enabled=True,
+        ain_channel=sg_setup.ain_channel,
+        voltage_range=sg_setup.voltage_range,
+        neg_voltage_range=sg_setup.neg_voltage_range,
+        resolution_index=sg_setup.resolution_index,
+        setup=setup,
+    )
+
+    # Configure the runtime settings:
+    #   - Scan rate [Hz]
+    #   - Enable HK + metrics
+
+    obsid = request_obsid()  # Since we're in a building block, this will not be None
+    csv_base_filename = f"{obsid}_{ORIGIN}"
+    csv_save_path = f"{os.environ.get('CUBESPEC_DATA_STORAGE_LOCATION')}/obs/{obsid}"
+
+    set_sg_runtime_settings(
+        scan_rate=scan_rate,
+        resync_interval_s=stream_setup.resync_interval_s,
+        buffer_size=stream_setup.buffer_size,
+        csv_enabled=True,
+        csv_save_path=csv_save_path,
+        csv_base_filename=csv_base_filename,
+        metrics_enabled=True,
+    )
+
+    start_sg_logging(setup=setup)
+
+
+@building_block
+def disable_sg_logging(setup: Setup = None) -> None:
+    """Disables the logging of all strain gauges.
+
+    The following steps are performed:
+
+        - Stop the logging of the strain gauges,
+        - Revert the configuration of the LabJack to the values in the setup,
+        - Disable all LabJack channels.
+    """
+
+    setup = setup or load_setup()
+    sg_setup = setup.gse.labjack_t7.channels
+
+    # Stop logging (for all strain gauges)
+
+    stop_sg_logging()
+
+    # Reset the runtime settings (for all strain gauges)
+
+    reset_sg_runtime_settings()
+    reset_sg()
+
+    # Disable all LabJack channels
+
+    for sg_name, sg_info in sg_setup.items():
+        set_sg_channel_runtime_settings(
+            sg_name=sg_name,
+            enabled=False,
+            ain_channel=sg_info.ain_channel,
+            setup=setup,
+        )
+
+
+@building_block
+def reset_sg(setup: Setup = None) -> None:
+    """Reverts the configuration of the LabJack to the values in the setup.
+
+    This includes reverting the information from the channels (runtime settings), stream, CSV, metrics, and plot
+    sections.
+
+    Args:
+        setup (Setup): Setup with the values to revert to.
+    """
+
+    setup = setup or load_setup()
+    lj_setup = setup.gse.labjack_t7
+    stream_setup = lj_setup.stream
+    csv_setup = lj_setup.csv
+    metrics_setup = lj_setup.metrics
+    plot_setup = lj_setup.plot
+
+    # Reset the channels (voltage ranges  + resolution index)
+
+    reset_sg_runtime_settings()
+
+    # Reset stream + CSV + metrics + plot
+
+    set_sg_runtime_settings(
+        scan_rate=stream_setup.scan_rate,
+        resync_interval_s=stream_setup.resync_interval_s,
+        buffer_size=stream_setup.buffer_size,
+        csv_enabled=csv_setup.enabled,
+        csv_save_path=csv_setup.save_path,
+        csv_base_filename=csv_setup.base_filename,
+        csv_max_file_size_bytes=csv_setup.max_file_size_bytes,
+        metrics_enabled=metrics_setup.enabled,
+        plot_enabled=plot_setup.enabled,
+        plot_window_seconds=plot_setup.window_seconds,
+        plot_interval_ms=plot_setup.interval_ms,
+        plot_show_stats=plot_setup.show_stats,
+    )

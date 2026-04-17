@@ -449,7 +449,7 @@ def ramp(
 
 
 @building_block
-def switch_off_awg(setup: Setup = None):
+def stop_wave_generation_and_reset(setup: Setup = None):
     """Switches off the wave generators.
 
     Args:

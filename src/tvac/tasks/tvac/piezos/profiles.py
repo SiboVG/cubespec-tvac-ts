@@ -13,6 +13,7 @@ HERE = Path(__file__).parent.parent.resolve()
 ICON_PATH = HERE / "icons/"
 
 
+# noinspection PyTypeHints
 @exec_ui(display_name="Load profile", use_kernel=True)
 def load_profile(
     profile: Callback(profiles, name="Voltage profile") = None,
@@ -35,6 +36,7 @@ def load_profile(
     end_observation()
 
 
+# noinspection PyTypeHints
 @exec_ui(display_name="Plot profile", use_kernel=True)
 def plot_profile(
     profile: Callback(profiles, name="Voltage profile") = None,

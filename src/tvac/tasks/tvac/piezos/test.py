@@ -46,10 +46,18 @@ def sine_sweep(
         sine_sweep_sg_scan_rate, name="Scan rate for strain gauge [Hz]"
     ) = None,
 ):
-    """Performs a sine sweep of the given piezo actuator, while keeping the others as a fixed voltage.
+    """Performs a single sine sweep of the given piezo actuator, while keeping the others as a fixed voltage.
 
-    For the given piezo actuator, we configure (and switch on) a frequency sweep.  For the other piezo actuators, we
-    configure a constant voltage.
+    Within the context of an observation, we perform the following steps:
+
+        - Interrupt all logging from the LabJack, to ensure a clean logging of the requested strain gauge.
+        - Configure + start logging of the requested strain gauge at the requested scan rate (all other configuration
+          parameters are taken from the setup).
+        - For the given piezo actuator, we configure (and switch on) a frequency sweep.  For the other piezo actuators,
+          we configure a constant voltage.
+        - Sleep for the requested duration of the sine sweep (we should only cover a single sine sweep).
+        - Stop the wave generation.
+        - Stop the logging of the requested strain gauge (disable + reset its parameters).
 
     Args:
         piezo: Name of the piezo actuator for which to configure a frequency sweep.
@@ -67,6 +75,12 @@ def sine_sweep(
 
     setup = load_setup()
 
+    # Configure + enable the logging of the requested strain gauge
+
+    enable_sg_logging(sg_name=strain_gauge, scan_rate=scan_rate, setup=setup)
+
+    # Configure and initiate the sine sweep
+
     wave_generation.sine_sweep(
         piezo=piezo,
         amplitude=amplitude,
@@ -82,9 +96,18 @@ def sine_sweep(
 
     time.sleep(sweep_time)
 
+    # Stop the sine sweep
+
+    wave_generation.switch_off_awg(setup)
+
+    # Disable the logging of the strain gauges
+
+    disable_sg_logging()
+
     end_observation()
 
 
+# noinspection PyTypeHints
 @exec_ui(display_name="Ramp", use_kernel=True)
 # def ramp(amplitude: float = 10, period: float = 10, piezo_list: PiezoList([Callback(piezos, name="Piezo actuator")], ["V1_V"])= None)-> None:
 def ramp(

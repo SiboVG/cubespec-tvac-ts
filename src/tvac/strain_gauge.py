@@ -72,6 +72,7 @@ _plot_keep_seconds = 60.0
 _runtime_overrides: dict[str, dict[str, object]] = {
     "stream": {},
     "csv": {},
+    "metrics": {},
     "plot": {},
 }
 _runtime_channel_overrides: dict[str, dict[str, object]] = {}

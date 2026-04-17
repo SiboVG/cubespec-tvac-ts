@@ -873,7 +873,7 @@ def disable_sg_logging(setup: Setup = None) -> None:
     # Reset the runtime settings (for all strain gauges)
 
     reset_sg_runtime_settings()
-    reset_sg()
+    reset_sg(setup=setup)
 
     # Disable all LabJack channels
 

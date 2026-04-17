@@ -58,6 +58,10 @@ def sine_sweep_fixed_voltage() -> float:
     return _sine_sweep_param("fixed_voltage")
 
 
+def sine_sweep_sg_scan_rate() -> float:
+    return 7500
+
+
 def piezos_incl_all() -> List[str]:
     """Names of the piezo actuators.  Each of them has a dedicated channel in a dedicated wave generator."""
 

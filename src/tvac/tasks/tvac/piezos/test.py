@@ -15,10 +15,12 @@ from tvac.tasks.tvac.piezos import (
     sine_sweep_time,
     sine_sweep_fixed_voltage,
 )
+from tvac.tasks.tvac.strain_gauges import strain_gauges
 
 UI_MODULE_DISPLAY_NAME = "1 - Test"
 
 
+# noinspection PyTypeHints
 @exec_ui(display_name="Sine sweep", use_kernel=True)
 def sine_sweep(
     piezo: Callback(piezos, name="Piezo actuator to sweep") = None,
@@ -38,6 +40,10 @@ def sine_sweep(
     fixed_voltage: Callback(
         sine_sweep_fixed_voltage, name="Constant voltage (other piezos) [Vdc]"
     ) = None,
+    strain_gauge: Callback(strain_gauges, name="Strain gauge to monitor") = None,
+    scan_rate: Callback(
+        sine_sweep_sg_scan_rate, name="Scan rate for strain gauge [Hz]"
+    ) = None,
 ):
     """Performs a sine sweep of the given piezo actuator, while keeping the others as a fixed voltage.
 
@@ -52,6 +58,8 @@ def sine_sweep(
         stop_frequency (float): Stop frequency for the frequency sweep [Hz].
         sweep_time (float): Frequency sweep time [s].
         fixed_voltage (float): Fixed voltage for the other piezo actuators.
+        strain_gauge (StrainGauge): Strain gauge to monitor.
+        scan_rate (float): Scan rate for the monitored strain gauge [Hz].
     """
 
     start_observation(f"Sine sweep for piezo actuator {piezo}")

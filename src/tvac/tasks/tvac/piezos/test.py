@@ -64,6 +64,8 @@ def sine_sweep(
 
     start_observation(f"Sine sweep for piezo actuator {piezo}")
 
+    setup = load_setup()
+
     wave_generation.sine_sweep(
         piezo=piezo,
         amplitude=amplitude,
@@ -72,7 +74,7 @@ def sine_sweep(
         stop_frequency=stop_frequency,
         sweep_time=sweep_time,
         fixed_voltage=fixed_voltage,
-        setup=load_setup(),
+        setup=setup,
     )
 
     end_observation()

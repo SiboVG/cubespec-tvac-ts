@@ -7,11 +7,10 @@ Make sure the PYTHONSTARTUP environment variable is defined in your terminal env
 variable is defined and loaded in the Console preferences in PyCharm.
 """
 
-import sys
 import logging
+import sys
 
-from rich import print
-from rich import pretty
+from rich import pretty, print
 
 pretty.install()
 
@@ -20,13 +19,14 @@ print("[blue]CubeSpec TVAC Scripts and CGSE Software.[/blue]")
 print("Loading default and required modules..")
 
 import numpy as np
+from egse.setup import list_setups, load_setup, submit_setup
 
-from egse.setup import load_setup, submit_setup, list_setups
+from egse.observation import start_observation, end_observation, execute
+from tvac import heaters, power_supply, wave_generation
 
-# from egse.observation import start_observation, end_observation, execute
-from tvac import heaters, power_supply
-
-
-print("Loading Setup...", end="")
+print("Loading Setup...", flush=True)
 setup = load_setup()
-print(f" Setup ID {setup.get_id()} loaded.", flush=True)
+if setup is not None:
+    print(f" Setup ID {setup.get_id()} loaded.", flush=True)
+else:
+    print("[red] No setup loaded, check error messages.[/red]", flush=True)

@@ -493,6 +493,7 @@ def ramp(
 
     start_ramp(amplitude=amplitude, period=period, piezo_list=piezo_list, setup=setup)
 
+    # Sleeping for the duration of each ramp has already been included in `start_ramp`
     # Stop the wave generation + reset the wave generators
 
     stop_wave_generation_and_reset(setup=setup)

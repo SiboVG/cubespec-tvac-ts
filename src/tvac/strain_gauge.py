@@ -859,8 +859,7 @@ def disable_sg_logging(setup: Setup = None) -> None:
     The following steps are performed:
 
         - Stop the logging of the strain gauges,
-        - Revert the configuration of the LabJack to the values in the setup,
-        - Disable all LabJack channels.
+        - Revert the configuration of the LabJack to the values in the setup.
     """
 
     setup = setup or load_setup()

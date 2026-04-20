@@ -873,6 +873,7 @@ def disable_sg_logging(setup: Setup = None) -> None:
     reset_sg_runtime_settings()
     reset_sg(setup=setup)
 
+
 @building_block
 def disable_sg_channels(setup: Setup = None) -> None:
     """Disables all LabJack channels."""
@@ -882,10 +883,7 @@ def disable_sg_channels(setup: Setup = None) -> None:
 
     for sg_name, sg_info in sg_setup.items():
         set_sg_channel_runtime_settings(
-            sg_name=sg_name,
-            enabled=False,
-            ain_channel=sg_info.ain_channel,
-            setup=setup
+            sg_name=sg_name, enabled=False, ain_channel=sg_info.ain_channel, setup=setup
         )
 
 

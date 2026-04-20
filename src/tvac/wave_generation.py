@@ -725,11 +725,15 @@ def check_trigger() -> None:
     """
 
     if not TRIGGER_SETTINGS:
-        print("No settings found for the external trigger.  Please, check your local settings.")
+        print(
+            "No settings found for the external trigger.  Please, check your local settings."
+        )
         return
 
     if "HOSTNAME" not in TRIGGER_SETTINGS or "GPIO" not in TRIGGER_SETTINGS:
-        print("Both the HOSTNAME and GPIO for the external trigger should be present in the settings file.")
+        print(
+            "Both the HOSTNAME and GPIO for the external trigger should be present in the settings file."
+        )
         return
 
     hostname: str = TRIGGER_SETTINGS["HOSTNAME"]

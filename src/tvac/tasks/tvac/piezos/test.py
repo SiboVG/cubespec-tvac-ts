@@ -5,7 +5,12 @@ from gui_executor.utypes import Callback, DropdownList
 from itertools import chain
 
 from tvac import wave_generation
-from tvac.tasks.tvac.piezos import piezos, sine_sweep_sg_scan_rate
+from tvac.tasks.tvac.piezos import (
+    piezos,
+    sine_sweep_sg_scan_rate,
+    ramp_amplitude,
+    ramp_period,
+)
 from tvac.tasks.tvac.piezos import (
     sine_sweep_amplitude,
     sine_sweep_dc_offset,
@@ -95,9 +100,11 @@ def sine_sweep(
 # noinspection PyTypeHints
 @exec_ui(display_name="Ramp", use_kernel=True)
 def ramp(
-    amplitude: float = 0.5,
-    period: float = 10,
-    piezo_list: DropdownList(piezos(), name="Pick a piezo actuator", defaults=piezos()) = None,
+    amplitude: Callback(ramp_amplitude, name="Ramp amplitude [Vpp]") = None,
+    period: Callback(ramp_period, name="Ramp period [s]") = None,
+    piezo_list: DropdownList(
+        piezos(), name="Pick a piezo actuator", defaults=piezos()
+    ) = None,
 ) -> None:
     """Ramps the voltage up and down for one piezo actuator after the other.
 

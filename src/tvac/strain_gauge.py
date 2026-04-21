@@ -710,7 +710,6 @@ def start_sg_logging(setup: Setup = None):
     try:
         logger.start_stream(callback=_on_stream_data)
     except Exception:
-
         # noinspection PyBroadException
         try:
             logger.close()
@@ -823,7 +822,6 @@ def enable_all_sg_logging(setup: Setup = None) -> None:
           context of an observation, so the obsid is guaranteed to be not None),
         - Start the logging of the LabJack.
     """
-
 
     setup = setup or load_setup()
 

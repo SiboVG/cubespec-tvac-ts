@@ -1,7 +1,7 @@
 from egse.observation import start_observation, end_observation
 from egse.setup import load_setup
 from gui_executor.exec import exec_ui
-from gui_executor.utypes import Callback, ListList
+from gui_executor.utypes import Callback, DropdownList
 from itertools import chain
 
 from tvac import wave_generation
@@ -94,11 +94,10 @@ def sine_sweep(
 
 # noinspection PyTypeHints
 @exec_ui(display_name="Ramp", use_kernel=True)
-# def ramp(amplitude: float = 10, period: float = 10, piezo_list: PiezoList([Callback(piezos, name="Piezo actuator")], ["V1_V"])= None)-> None:
 def ramp(
     amplitude: float = 0.5,
     period: float = 10,
-    piezo_list: ListList([str], ["V1_V"]) = None,
+    piezo_list: DropdownList(piezos(), name="Pick a piezo actuator", defaults=piezos()) = None,
 ) -> None:
     """Ramps the voltage up and down for one piezo actuator after the other.
 

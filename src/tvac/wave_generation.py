@@ -18,7 +18,12 @@ from egse.observation import building_block
 from egse.settings import Settings
 from egse.setup import load_setup, Setup
 
-from tvac.strain_gauge import disable_sg_logging, enable_sg_logging, disable_sg_channels, enable_all_sg_logging
+from tvac.strain_gauge import (
+    disable_sg_logging,
+    enable_sg_logging,
+    disable_sg_channels,
+    enable_all_sg_logging,
+)
 
 # noinspection PyTypeChecker
 TRIGGER_SETTINGS: dict = Settings.load("Aim-TTi TGF4000").get("TRIGGER")

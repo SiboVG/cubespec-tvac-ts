@@ -201,8 +201,15 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     for config in (v1_config, v2_config, v3_config):
         if np.min(config.signal) < min_voltage or np.max(config.signal) > max_voltage:
             raise ValueError(
-                f"Voltage profile {profile} for piezo actuator {config.name} is outside of the safe range for piezo actuators ({min_voltage} - {max_voltage}V at wave generator level)"
+                f"Voltage profile {profile} for piezo actuator {config.name} is outside of the safe range for piezo "
+                f"actuators ({min_voltage} - {max_voltage}V at wave generator level)"
             )
+        if config.amplitude == 0:
+            raise ValueError(
+                f"Voltage profile {profile} for piezo actuator {config.name} has an amplitude of 0Vpp, which is not "
+                f"supported"
+            )
+
 
     # We will configure all channels with the requested voltage profile (arbitrary waveform).  Have a look at #52 on
     # more information how this works.
@@ -364,6 +371,12 @@ def sine_sweep(
             f"wave generator level)"
         )
 
+    if amplitude == 0:
+        raise ValueError(
+            f"The amplitude for the sine sweep for piezo actuator {piezo} has an amplitude of 0Vpp, which is not "
+            f"supported"
+        )
+
     if (
         dc_offset - amplitude / 2 < min_voltage
         or dc_offset + amplitude / 2 > max_voltage
@@ -517,6 +530,11 @@ def ramp(
         raise ValueError(
             f"Given amplitude is outside of the safety range for the piezo actuators ({min_voltage} - {max_voltage}V "
             f"at wave generator level)"
+        )
+
+    if amplitude == 0:
+        raise ValueError(
+            f"The amplitude for the voltage ramp has an amplitude of 0Vpp, which is not supported"
         )
 
     # Configure and initiate the voltage ramp (the wave generation stops automatically, but you will still have to

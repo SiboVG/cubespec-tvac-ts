@@ -816,7 +816,9 @@ def enable_sg_logging(sg_name: str, scan_rate: float, setup: Setup) -> None:
 
     setup = setup or load_setup()
 
+    # noinspection PyUnresolvedReferences
     sg_setup = setup.gse.labjack_t7.channels[sg_name]
+    # noinspection PyUnresolvedReferences
     stream_setup = setup.gse.labjack_t7.stream
 
     # Set the voltage ranges + resolution index (for the requested strain gauge), and enable the channel
@@ -879,6 +881,7 @@ def disable_sg_channels(setup: Setup = None) -> None:
     """Disables all LabJack channels."""
 
     setup = setup or load_setup()
+    # noinspection PyUnresolvedReferences
     sg_setup = setup.gse.labjack_t7.channels
 
     for sg_name, sg_info in sg_setup.items():
@@ -899,6 +902,7 @@ def reset_sg(setup: Setup = None) -> None:
     """
 
     setup = setup or load_setup()
+    # noinspection PyUnresolvedReferences
     lj_setup = setup.gse.labjack_t7
     stream_setup = lj_setup.stream
     csv_setup = lj_setup.csv

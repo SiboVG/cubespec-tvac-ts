@@ -177,9 +177,7 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
 
     setup = setup or load_setup()
     wave_generators_setup = setup.gse.wave_generators
-    min_voltage, max_voltage = map(
-        int, wave_generators_setup.piezo_tests.safety_range.strip("()").split(",")
-    )
+    min_voltage, max_voltage = setup.gse.wave_generators.piezo_tests.safety_range
 
     awg_list = []
     channel_list = []
@@ -358,9 +356,7 @@ def sine_sweep(
     """
 
     setup = setup or load_setup()
-    min_voltage, max_voltage = map(
-        int, setup.gse.wave_generators.piezo_tests.safety_range.strip("()").split(",")
-    )
+    min_voltage, max_voltage = setup.gse.wave_generators.piezo_tests.safety_range
 
     if not min_voltage <= fixed_voltage <= max_voltage:
         raise ValueError(
@@ -515,9 +511,7 @@ def ramp(
     """
 
     setup = setup or load_setup()
-    min_voltage, max_voltage = map(
-        int, setup.gse.wave_generators.piezo_tests.safety_range.strip("()").split(",")
-    )
+    min_voltage, max_voltage = setup.gse.wave_generators.piezo_tests.safety_range
 
     if not min_voltage <= amplitude <= max_voltage:
         raise ValueError(

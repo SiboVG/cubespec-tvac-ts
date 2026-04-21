@@ -826,22 +826,20 @@ def enable_all_sg_logging(setup: Setup = None) -> None:
     setup = setup or load_setup()
 
     # noinspection PyUnresolvedReferences
-    sg_setup_all = setup.gse.labjack_t7.channels
+    sg_setup = setup.gse.labjack_t7.channels
     # noinspection PyUnresolvedReferences
     stream_setup = setup.gse.labjack_t7.stream
 
     # Set the voltage ranges + resolution index (for the requested strain gauge), and enable the channel
 
-    for sg_name in sg_setup_all.channels:
-        sg_setup = sg_setup_all[sg_name]
-
+    for sg_name, sg_info in sg_setup.items():
         set_sg_channel_runtime_settings(
             sg_name=sg_name,
             enabled=True,
-            ain_channel=sg_setup.ain_channel,
-            voltage_range=sg_setup.voltage_range,
-            neg_voltage_range=sg_setup.neg_voltage_range,
-            resolution_index=sg_setup.resolution_index,
+            ain_channel=sg_info.ain_channel,
+            voltage_range=sg_info.voltage_range,
+            neg_voltage_range=sg_info.neg_voltage_range,
+            resolution_index=sg_info.resolution_index,
             setup=setup,
         )
 

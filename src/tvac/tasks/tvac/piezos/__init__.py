@@ -77,9 +77,15 @@ def sine_sweep_sg_scan_rate() -> float:
     return 7500
 
 
+def _ramp_param(param: str) -> float:
+    """Get a ramp parameter value from the Setup configuration."""
+    setup = load_setup()
+    return float(getattr(setup.gse.wave_generators.piezo_tests.ramp, param))
+
+
 def ramp_amplitude() -> float:
-    return 0.5
+    return _ramp_param("amplitude")
 
 
 def ramp_period() -> float:
-    return 10
+    return _ramp_param("period")

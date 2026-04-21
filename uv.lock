@@ -16,15 +16,15 @@ resolution-markers = [
 
 [[package]]
 name = "aim-tti-awg"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "cgse-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/9b/8b3cccc90ea71107b49471563e66a1b08805717ea6e1dae589cdb5b7ba74/aim_tti_awg-0.22.0.tar.gz", hash = "sha256:9cb4ef5b00e37f5a514065d1169f59a2c6cf1b8fb098bf5044316f40d9e3aefc", size = 27387, upload-time = "2026-04-09T08:19:11.906Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/db/3c09a84ff14697d4d3369dbfc1d931268bdd289809115425b2a221c8cd4b/aim_tti_awg-0.22.1.tar.gz", hash = "sha256:0919bbf67b982a2e9e8344fe8e13a111017a5cb29922b59b1801297bb29f19ec", size = 27441, upload-time = "2026-04-17T14:52:06.283Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ba/6e/e4152a06fb57260265a6a1b059c54281b429e5a4cc7dcdbfcb47ff818d79/aim_tti_awg-0.22.0-py3-none-any.whl", hash = "sha256:a1175f7ea373da97821d1964a9fa6cffb199f2b69db4458736e310bae19f0581", size = 31768, upload-time = "2026-04-09T08:19:24.72Z" },
+    { url = "https://files.pythonhosted.org/packages/93/ef/88957b5e2b9cb3b966bb5e0e52c5cb0cbf0310459435e636d54375d06e0e/aim_tti_awg-0.22.1-py3-none-any.whl", hash = "sha256:e7ffba33034c5cc72079a001f623134ddfa57b11d4a4527516d5cf495dc238f5", size = 31770, upload-time = "2026-04-17T14:52:17.781Z" },
 ]
 
 [[package]]
@@ -328,7 +328,7 @@ wheels = [
 
 [[package]]
 name = "cgse-common"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -354,53 +354,54 @@ dependencies = [
     { name = "typer" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/e8/ac6bababbd7db7c792fbea4cbdb4f7a704768ad78cc757a259b9ec9d777b/cgse_common-0.22.0.tar.gz", hash = "sha256:97a2f979d8838aff1ef647771d14d50952a9741f6b831af64988ef41b9c897b8", size = 124262, upload-time = "2026-04-09T08:19:25.736Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/54/95/d526228974307b9ca3bddb1ddf1f8f7a5676d03a42e07640847eed80fe65/cgse_common-0.22.1.tar.gz", hash = "sha256:cc2034f8cfdee7bca6037d2058a7c63fc5e2ece556d62d22bb29bfa0cf8212f3", size = 124307, upload-time = "2026-04-17T14:52:04.253Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cf/c0/8585b1a69a043637b378bf8943eeb1f4ccaa04cbd94193b3ff789fafc0e4/cgse_common-0.22.0-py3-none-any.whl", hash = "sha256:cb3b3b9c52bdb87122339ce860c36409bfab0e689e6c9b33d1db21553b051175", size = 138649, upload-time = "2026-04-09T08:19:15.041Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/71/83d31326ca735d75d4a3eb520667ff4bad0320ce9089a0fb8f7e4ef5f96b/cgse_common-0.22.1-py3-none-any.whl", hash = "sha256:7ec67bb81c39fe4ba1a1337c9889cde103adf88fc1d435d7347fec6d93841374", size = 138647, upload-time = "2026-04-17T14:52:12.932Z" },
 ]
 
 [[package]]
 name = "cgse-core"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "aiosqlite" },
     { name = "apscheduler" },
     { name = "cgse-common" },
+    { name = "cgse-gui" },
     { name = "cgse-tools" },
     { name = "pytz" },
     { name = "qtpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/03/d5/5aabd23f0227195c88c66e8ffd66d8751ea515c84c77bece5b8f85911ac1/cgse_core-0.22.0.tar.gz", hash = "sha256:6f2424d8d54a8b4b484d3a9ff5409e9b05cab3f9f747427b3d640b8bc992bfb8", size = 158216, upload-time = "2026-04-09T08:18:59.887Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/75/e0/fc23124c58a5c7d56f7cd678bbf469f2d2a03059cd3e0e32c970a6b727c1/cgse_core-0.22.1.tar.gz", hash = "sha256:b65651b277281d40bbefe9fabaa603a51f05f6c745ba8d760809437b8bb2f92c", size = 159414, upload-time = "2026-04-17T14:52:05.257Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b1/42/457fe61b6190dc90cc018f7070cd98a97a780d38fa3adcc365cc3a34df99/cgse_core-0.22.0-py3-none-any.whl", hash = "sha256:baef15dbff1f61f34abb0ad7aebe23e6f0b3c85e88db990aaee768cf4f2ce57b", size = 187536, upload-time = "2026-04-09T08:19:21.968Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/54/1f8dd0b7208045fda148a4a9b6f11d5cb0b9271eeb0c5a3fceed6d25defd/cgse_core-0.22.1-py3-none-any.whl", hash = "sha256:c1d1ed43cdd62ae990c4451b4bd2e780fc37720806232bca1f6a0c763e8f5344", size = 188747, upload-time = "2026-04-17T14:51:56.165Z" },
 ]
 
 [[package]]
 name = "cgse-gui"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "pyqt5" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/23/b4/7aea83148e4243548fcf80767ff00be9c33740cb3f9d95c834a57b86240f/cgse_gui-0.22.0.tar.gz", hash = "sha256:6f4eed4c00fcb19f4879b446d2365111e5c1ef25983664872900e84ab0498df2", size = 178033, upload-time = "2026-04-09T08:19:02.991Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c2/41/9f057f3d8653ab944396367ffa0f3194b463b47e054a9bdb6f05ac108f65/cgse_gui-0.22.1.tar.gz", hash = "sha256:9e0a5709c8e037d3943bfc379b32f925ff3cc3b8821fdf94ddb7be4044fa9abe", size = 178105, upload-time = "2026-04-17T14:52:18.663Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/5f/1368ff34c18d78bc028444113a800b23525e46d21c66a60bf21a1d47e23f/cgse_gui-0.22.0-py3-none-any.whl", hash = "sha256:5b4f6d7474d4c84ce959f46294f1751cf69447a517eac94303d7486e45901290", size = 284051, upload-time = "2026-04-09T08:19:14.074Z" },
+    { url = "https://files.pythonhosted.org/packages/01/d9/eccaef8a3d2593d9d00de23a1ad19fffe904ad7210764631fd97abf7f089/cgse_gui-0.22.1-py3-none-any.whl", hash = "sha256:87b749e4d712e83c9a53622b6623440791150d79fd3ebec55f67d4f7d05ea031", size = 284050, upload-time = "2026-04-17T14:51:53.61Z" },
 ]
 
 [[package]]
 name = "cgse-tools"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "textual" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7e/10/67712e493c8429eef7512ada9ad44e009f45fe039563e03490a897a59cd9/cgse_tools-0.22.0.tar.gz", hash = "sha256:420a6895fdab0811b8a7f007d8df85ede0a0f0bdd06dd2a8b5454ca429877ffa", size = 6586, upload-time = "2026-04-09T08:19:27.462Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/69/e9/a671062d6e9d66c932b39e885214c622d32100ff3fabdaf04364c936f2cb/cgse_tools-0.22.1.tar.gz", hash = "sha256:94d6cf657f36632615b2f4a59cb3dca6907c3a863b755ce41359ead6ed8fe93f", size = 6640, upload-time = "2026-04-17T14:51:58.499Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bf/e6/3d2fa9540d7186b2ce42e92407741cc99caff9e498e8141b641cd2945933/cgse_tools-0.22.0-py3-none-any.whl", hash = "sha256:8f2ffb374caa3b1c2b19aea469ec216752ac0cff99009326f8fa255484a8162b", size = 7847, upload-time = "2026-04-09T08:19:05.188Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/84/b45bdeb1aa4f34f59582041625481170fe046108e9e1ddf6cb2fd2f750f1/cgse_tools-0.22.1-py3-none-any.whl", hash = "sha256:1088e03bdb7af190a801e22d95212db31a61a36a219e6296466b5ac69591aeae", size = 7850, upload-time = "2026-04-17T14:52:24.887Z" },
 ]
 
 [[package]]
@@ -728,6 +729,8 @@ dependencies = [
     { name = "kikusui-power-supply" },
     { name = "labjack-ljm" },
     { name = "matplotlib" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pigpio" },
     { name = "pyqt5" },
     { name = "pytz" },
@@ -747,6 +750,7 @@ requires-dist = [
     { name = "kikusui-power-supply" },
     { name = "labjack-ljm" },
     { name = "matplotlib" },
+    { name = "numpy" },
     { name = "pigpio" },
     { name = "pyqt5" },
     { name = "pytz" },
@@ -814,15 +818,15 @@ wheels = [
 
 [[package]]
 name = "digilent"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "cgse-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/77/23/2b01703c7a1d18278b7499dbfbeb44122fa6fe7e623fe1fd7b6922df87a4/digilent-0.22.0.tar.gz", hash = "sha256:a5a41d09a9e480f0211e4cf69ced09b72a2df5acf0ffa7047331a6fc4450921f", size = 26694, upload-time = "2026-04-09T08:19:08.892Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/da/d36e444ce7ccf7d0b162af7eeb37da8897f93b226494496472e59575f990/digilent-0.22.1.tar.gz", hash = "sha256:e5e238956b89fc3bebc7b73abd5b5253ba8a4440d4bc2e02707be20280f76a88", size = 26740, upload-time = "2026-04-17T14:51:50.12Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/9e/b21527a21131aa66758200ef7a150cc2d21b21fb10323cfa39b097fe815f/digilent-0.22.0-py3-none-any.whl", hash = "sha256:e33a3ad107fdaef25953fc6779623358a5be862b5de600b6d797884a59e394e1", size = 31247, upload-time = "2026-04-09T08:19:16.981Z" },
+    { url = "https://files.pythonhosted.org/packages/75/09/a475513e2cdc55f6ac4e39df950ec3740cb2d7f0f2baf1fae8d358e9ccb2/digilent-0.22.1-py3-none-any.whl", hash = "sha256:01e6baa87e3c0bce4680e0bb2a3a44497dc835eb5e51bc123213d94f98280031", size = 31248, upload-time = "2026-04-17T14:51:52.225Z" },
 ]
 
 [[package]]
@@ -1390,7 +1394,7 @@ wheels = [
 
 [[package]]
 name = "keithley-tempcontrol"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
@@ -1398,22 +1402,22 @@ dependencies = [
     { name = "cgse-gui" },
     { name = "pyqt5" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/15/0a/ecf0b1869d1ada02fcc862674b0ff65494435db29d6701cef68c3f16f69a/keithley_tempcontrol-0.22.0.tar.gz", hash = "sha256:403ee40667eda58a875884c4a65931ef0b0db10458d7cfc1ec140c661faada43", size = 25546, upload-time = "2026-04-09T08:19:21.326Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7b/7c/efde70bbdd10265b6132949f08ff2cfab264f058f2861e2a0c2269c3a1a5/keithley_tempcontrol-0.22.1.tar.gz", hash = "sha256:d235bf84bf5f9089676c3d832095bda2ad0c90d3d30083b755535fb26b291ec9", size = 25597, upload-time = "2026-04-17T14:52:23.241Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/e6/27e4872519b9f57c4877e43f5f3b7036dc6858ee3c2b3b13cc8a04a9ea59/keithley_tempcontrol-0.22.0-py3-none-any.whl", hash = "sha256:831d03bd6b5c6de0c0d3bf54a85613c31b78ad847598b1aefd49d3fcb29720f4", size = 30781, upload-time = "2026-04-09T08:19:16.151Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/6b/07b435e3a882afb268dbbd52b8e53b7d9d1ab5151b0ef86d9377570ac87f/keithley_tempcontrol-0.22.1-py3-none-any.whl", hash = "sha256:f426a613e5d084663f707032c937996ee3c6fc3bb4912e3853e490cc61a3a164", size = 30780, upload-time = "2026-04-17T14:52:08.532Z" },
 ]
 
 [[package]]
 name = "kikusui-power-supply"
-version = "0.22.0"
+version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cgse-common" },
     { name = "cgse-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/af/91e2b5989b9c809a7de7f81435432bc7dfd69b9842fb8de87e999956f3a0/kikusui_power_supply-0.22.0.tar.gz", hash = "sha256:4de1437693b547568ada103c3d8439b4c9a0d88fe7b44448253571260e01e363", size = 13120, upload-time = "2026-04-09T08:19:28.328Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/29/2f83b0255f58a71760d99327a2d5ebfe46c7186640252ca1b5c0c3a4c1c2/kikusui_power_supply-0.22.1.tar.gz", hash = "sha256:e37c01c0c26f1a3950ccc5257bb8fa39bd49de7025aaa32526be7f1a36b383cb", size = 13171, upload-time = "2026-04-17T14:52:11.03Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/8d/7d3b89cee0e1eeedcb598094b2cd9c3088147c2fe929c313b204195ee508/kikusui_power_supply-0.22.0-py3-none-any.whl", hash = "sha256:a88c0d2ce0e79a1b6dd27c098e0c2a084dee34d5e8a03fa4781503774fef09da", size = 17773, upload-time = "2026-04-09T08:19:10.713Z" },
+    { url = "https://files.pythonhosted.org/packages/7e/22/18d1f447265f1d8805c9020c422698a0edbad280720337b8108b073e9f1e/kikusui_power_supply-0.22.1-py3-none-any.whl", hash = "sha256:70aa018dd4af08ba53b8ff327f32451806d708d7ca86514f47777868b072a7a7", size = 17772, upload-time = "2026-04-17T14:52:16.163Z" },
 ]
 
 [[package]]
@@ -3082,7 +3086,7 @@ wheels = [
 
 [[package]]
 name = "textual"
-version = "8.2.3"
+version = "8.2.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markdown-it-py", extra = ["linkify"] },
@@ -3092,9 +3096,9 @@ dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cf/2f/d44f0f12b3ddb1f0b88f7775652e99c6b5a43fd733badf4ce064bdbfef4a/textual-8.2.3.tar.gz", hash = "sha256:beea7b86b03b03558a2224f0cc35252e60ef8b0c4353b117b2f40972902d976a", size = 1848738, upload-time = "2026-04-05T09:12:45.338Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/89/bec5709fb759f9c784bbcb30b2e3497df3f901691d13c2b864dbf6694a17/textual-8.2.4.tar.gz", hash = "sha256:d4e2b2ddd7157191d00b228592b7c739ea080b7d792fd410f23ca75f05ea76c4", size = 1848933, upload-time = "2026-04-19T04:20:45.845Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/28/a81d6ce9f4804818bd1231a9a6e4d56ea84ebbe8385c49591444f0234fa2/textual-8.2.3-py3-none-any.whl", hash = "sha256:5008ac581bebf1f6fa0520404261844a231e5715fdbddd10ca73916a3af48ca2", size = 724231, upload-time = "2026-04-05T09:12:48.747Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/32/02932f0d597cdbb34e34bf24266ff0f2cf292ccb3aafc37dd9efcb0cc416/textual-8.2.4-py3-none-any.whl", hash = "sha256:a83bd3f0cc7125ca203845af753f9d6b6be030025ecd1b05cc75ebe645b9c4ba", size = 724390, upload-time = "2026-04-19T04:20:49.968Z" },
 ]
 
 [[package]]

@@ -73,8 +73,28 @@ def sine_sweep_fixed_voltage() -> float:
     return _sine_sweep_param("fixed_voltage")
 
 
+def _sine_sweep_labjack_logging_param(param: str) -> float:
+    """Get a sine sweep parameter LabJack logging value from the Setup configuration."""
+    setup = load_setup()
+    return float(
+        getattr(setup.gse.wave_generators.piezo_tests.sine_sweep.labjack_logging, param)
+    )
+
+
+def sine_sweep_sg_pos_voltage_range() -> float:
+    _sine_sweep_labjack_logging_param("voltage_range")
+
+
+def sine_sweep_sg_neg_voltage_range() -> float:
+    return _sine_sweep_param("neg_voltage_range")
+
+
+def sine_sweep_sg_resolution_index() -> float:
+    return int(_sine_sweep_labjack_logging_param("resolution_index"))
+
+
 def sine_sweep_sg_scan_rate() -> float:
-    return 7500
+    return _sine_sweep_labjack_logging_param("scan_rate")
 
 
 def _ramp_param(param: str) -> float:

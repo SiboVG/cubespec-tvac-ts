@@ -385,6 +385,10 @@ def sine_sweep(
     setup = setup or load_setup()
     # noinspection PyUnresolvedReferences
     min_voltage, max_voltage = setup.gse.wave_generators.piezo_tests.safety_range
+    # noinspection PyUnresolvedReferences
+    sine_sweep_labjack_logging = (
+        setup.gse.wave_generators.piezo_tests.sine_sweep.labjack_logging
+    )
 
     if not min_voltage <= fixed_voltage <= max_voltage:
         raise ValueError(
@@ -415,7 +419,14 @@ def sine_sweep(
 
     # Configure + enable the logging of the requested strain gauge
 
-    enable_sg_logging(sg_name=strain_gauge, scan_rate=scan_rate, setup=setup)
+    enable_sg_logging(
+        sg_name=strain_gauge,
+        voltage_range=sine_sweep_labjack_logging.voltage_range,
+        neg_voltage_range=sine_sweep_labjack_logging.neg_voltage_range,
+        resolution_index=sine_sweep_labjack_logging.resolution_index,
+        scan_rate=scan_rate,
+        setup=setup,
+    )
 
     # Configure and initiate the sine sweep (keeps on going until the wave generation is stopped explicitly)
 

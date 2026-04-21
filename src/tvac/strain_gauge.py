@@ -865,7 +865,14 @@ def enable_all_sg_logging(setup: Setup = None) -> None:
 
 
 @building_block
-def enable_sg_logging(sg_name: str, scan_rate: float, setup: Setup) -> None:
+def enable_sg_logging(
+    sg_name: str,
+    voltage_range: float,
+    neg_voltage_range,
+    resolution_index: int,
+    scan_rate: float,
+    setup: Setup,
+) -> None:
     """Enables the logging for the given strain gauge.
 
     The following steps are performed:
@@ -878,6 +885,14 @@ def enable_sg_logging(sg_name: str, scan_rate: float, setup: Setup) -> None:
           also refer to the current observation (since this function is a building block, it can only be run in the
           context of an observation, so the obsid is guaranteed to be not None),
         - Start the logging of the LabJack.
+
+    Args:
+        sg_name (str): Name of the strain gauge.
+        voltage_range (float): Positive voltage range of the strain gauge [V].
+        neg_voltage_range (float): Negative voltage range of the strain gauge [V].
+        resolution_index (int): Resolution index of the strain gauge [m].
+        scan_rate (float): Scan rate of the strain gauge [Hz].
+        setup (Setup): Setup.
     """
 
     setup = setup or load_setup()
@@ -893,9 +908,9 @@ def enable_sg_logging(sg_name: str, scan_rate: float, setup: Setup) -> None:
         sg_name=sg_name,
         enabled=True,
         ain_channel=sg_setup.ain_channel,
-        voltage_range=sg_setup.voltage_range,
-        neg_voltage_range=sg_setup.neg_voltage_range,
-        resolution_index=sg_setup.resolution_index,
+        voltage_range=voltage_range,
+        neg_voltage_range=neg_voltage_range,
+        resolution_index=resolution_index,
         setup=setup,
     )
 

@@ -18,7 +18,7 @@ from egse.observation import building_block
 from egse.settings import Settings
 from egse.setup import load_setup, Setup
 
-from tvac.strain_gauge import disable_sg_logging, enable_sg_logging, disable_sg_channels
+from tvac.strain_gauge import disable_sg_logging, enable_sg_logging, disable_sg_channels, enable_all_sg_logging
 
 # noinspection PyTypeChecker
 TRIGGER_SETTINGS: dict = Settings.load("Aim-TTi TGF4000").get("TRIGGER")
@@ -213,6 +213,11 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
                 f"supported"
             )
 
+    # Interrupt ongoing logging (this incl. resetting to defaults from the setup) and re-start logging with the
+    # default configuration (except for the output folder and filenames: these should pertain to the obsid)
+
+    disable_sg_logging(setup=setup)
+    enable_all_sg_logging(setup=setup)
 
     # We will configure all channels with the requested voltage profile (arbitrary waveform).  Have a look at #52 on
     # more information how this works.
@@ -282,6 +287,11 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     # noinspection PyUnresolvedReferences
     time.sleep(setup.gse.wave_generators.piezo_tests.trigger_delay)
     start_signal_trigger()
+
+    # This is the end of the building block and potentially of the observation
+    #   - Since the observation stopped, it will be possible to start a new one (e.g. to command the heaters)
+    #   - The logging doesn't know the observation has stopped and will continue to write its data to the folder of that
+    #     observation, until the logging is interrupted and the defaults are restored.
 
 
 def extract_awg_config_from_setup(profile: str, setup: Setup = None):

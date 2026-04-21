@@ -33,6 +33,7 @@ dependencies = [
     "scipy>=1.15.3",
     "pigpio",
     "invoke",
+    "numpy",
 ]
 
 [project.entry-points."navdict.directive"]

@@ -237,7 +237,12 @@ def load_voltage_profile(profile: str, setup: Setup = None) -> None:
     # default configuration (except for the output folder and filenames: these should pertain to the obsid)
 
     disable_sg_logging(setup=setup)
-    enable_all_sg_logging(setup=setup)
+    enable_all_sg_logging(
+        setup=setup,
+        stream_resolution_index=_piezo_test_stream_resolution_index(
+            piezo_tests_setup.profiles
+        ),
+    )
 
     # We will configure all channels with the requested voltage profile (arbitrary waveform).  Have a look at #52 on
     # more information how this works.
@@ -360,7 +365,13 @@ def extract_awg_config_from_setup(profile: str, setup: Setup = None):
 
 def _piezo_test_stream_resolution_index(test_setup) -> int:
     """Return the LabJack stream resolution index for one piezo test."""
-    labjack_logging = getattr(test_setup, "labjack_logging", None)
+    if isinstance(test_setup, dict):
+        labjack_logging = test_setup.get("labjack_logging")
+    else:
+        labjack_logging = getattr(test_setup, "labjack_logging", None)
+
+    if isinstance(labjack_logging, dict):
+        return int(labjack_logging.get("stream_resolution_index", 0))
     return int(getattr(labjack_logging, "stream_resolution_index", 0))
 
 

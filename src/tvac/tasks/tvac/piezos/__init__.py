@@ -11,7 +11,11 @@ def profiles() -> List[str]:
 
     setup = load_setup()
 
-    return list(setup.gse.wave_generators.piezo_tests.profiles.keys())
+    return [
+        profile
+        for profile in setup.gse.wave_generators.piezo_tests.profiles.keys()
+        if profile != "labjack_logging"
+    ]
 
 
 def piezos() -> List[str]:

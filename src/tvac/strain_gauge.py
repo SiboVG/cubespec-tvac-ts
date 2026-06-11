@@ -181,7 +181,9 @@ def _snapshot_setup_cfg(setup: Setup) -> dict[str, dict[str, Any]]:
     return {
         "stream": {
             "scan_rate": cfg.stream.scan_rate,
-            "stream_resolution_index": getattr(cfg.stream, "stream_resolution_index", 0),
+            # Not a setup.gse.labjack_t7.stream field. Piezo tests can override
+            # this per measurement through in-memory runtime settings.
+            "stream_resolution_index": 0,
             "resync_interval_s": cfg.stream.resync_interval_s,
             "buffer_size": cfg.stream.buffer_size,
         },
@@ -431,7 +433,6 @@ def get_sg_settings(setup: Setup = None) -> str:
         (
             "stream: "
             f"scan_rate={effective['stream']['scan_rate']}, "
-            f"stream_resolution_index={effective['stream']['stream_resolution_index']}, "
             f"resync_interval_s={effective['stream']['resync_interval_s']}, "
             f"buffer_size={effective['stream']['buffer_size']}"
         ),
@@ -712,7 +713,6 @@ def start_sg_logging(setup: Setup = None):
         "starting stream "
         f"channels={_active_channel_labels} "
         f"scan_rate={effective['stream']['scan_rate']} "
-        f"stream_resolution_index={effective['stream']['stream_resolution_index']} "
         f"plot_enabled={effective['plot']['enabled']} "
         f"csv_enabled={effective['csv']['enabled']}"
         f"metrics_enabled={effective['metrics']['enabled']}",
@@ -868,11 +868,7 @@ def enable_all_sg_logging(
 
     set_sg_runtime_settings(
         scan_rate=stream_setup.scan_rate,
-        stream_resolution_index=(
-            stream_resolution_index
-            if stream_resolution_index is not None
-            else getattr(stream_setup, "stream_resolution_index", 0)
-        ),
+        stream_resolution_index=stream_resolution_index,
         resync_interval_s=stream_setup.resync_interval_s,
         buffer_size=stream_setup.buffer_size,
         csv_enabled=True,
@@ -946,11 +942,7 @@ def enable_sg_logging(
 
     set_sg_runtime_settings(
         scan_rate=scan_rate,
-        stream_resolution_index=(
-            stream_resolution_index
-            if stream_resolution_index is not None
-            else getattr(stream_setup, "stream_resolution_index", 0)
-        ),
+        stream_resolution_index=stream_resolution_index,
         resync_interval_s=stream_setup.resync_interval_s,
         buffer_size=stream_setup.buffer_size,
         csv_enabled=True,
@@ -1025,7 +1017,6 @@ def reset_sg(setup: Setup = None) -> None:
 
     set_sg_runtime_settings(
         scan_rate=stream_setup.scan_rate,
-        stream_resolution_index=getattr(stream_setup, "stream_resolution_index", 0),
         resync_interval_s=stream_setup.resync_interval_s,
         buffer_size=stream_setup.buffer_size,
         csv_enabled=csv_setup.enabled,

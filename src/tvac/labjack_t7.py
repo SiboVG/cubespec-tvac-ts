@@ -146,7 +146,6 @@ class LabJackT7Logger:
             voltage_range=voltage_ranges,
             neg_voltage_range=neg_voltage_ranges,
             resolution_index=resolution_indices,
-            stream_resolution_index=getattr(stream, "stream_resolution_index", 0),
             resync_interval_s=stream.resync_interval_s,
             buffer_size=stream.buffer_size,
         )

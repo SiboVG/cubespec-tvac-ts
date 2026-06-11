@@ -45,10 +45,6 @@ def sg_scan_rate() -> float:
     return float(get_sg_effective_settings()["stream"]["scan_rate"])
 
 
-def sg_stream_resolution_index() -> int:
-    return int(get_sg_effective_settings()["stream"]["stream_resolution_index"])
-
-
 def sg_resync_interval_s() -> int:
     return int(get_sg_effective_settings()["stream"]["resync_interval_s"])
 

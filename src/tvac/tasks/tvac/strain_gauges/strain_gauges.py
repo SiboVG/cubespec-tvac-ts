@@ -28,7 +28,6 @@ from tvac.tasks.tvac.strain_gauges import (
     sg_plot_window_seconds,
     sg_resync_interval_s,
     sg_scan_rate,
-    sg_stream_resolution_index,
     strain_gauges,
     voltage_ranges,
     resolution_indices,
@@ -183,9 +182,6 @@ def configure_sg_channels(
 @exec_ui(display_name="Configure stream", use_kernel=True)
 def configure_stream(
     scan_rate: Callback(sg_scan_rate, name="Scan rate [Hz]") = None,
-    stream_resolution_index: Callback(
-        sg_stream_resolution_index, name="Stream resolution index"
-    ) = None,
     resync_interval_s: Callback(
         sg_resync_interval_s, name="Resync interval [s]"
     ) = None,
@@ -195,7 +191,6 @@ def configure_stream(
     try:
         set_sg_runtime_settings(
             scan_rate=float(scan_rate),
-            stream_resolution_index=int(stream_resolution_index),
             resync_interval_s=int(resync_interval_s),
             buffer_size=int(buffer_size),
         )
